@@ -9,6 +9,7 @@
     },
     "license": "MIT",
     "dependencies": {
+        "@actions/cache": "^1.0.7",
         "@actions/core": "^1.2.7"
     },
     "devDependencies": {
