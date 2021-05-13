@@ -1,0 +1,5 @@
+name: 'Setup Minecraft'
+description: 'Setup a Minecraft server'
+runs:
+  using: 'node12'
+  main: 'dist/index.js'
