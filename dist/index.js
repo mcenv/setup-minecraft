@@ -59369,11 +59369,64 @@ module.exports = v4;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.OUTPUT_VERSION = exports.INPUT_EULA = exports.INPUT_VERSION = exports.MINECRAFT = exports.VERSION_MANIFEST_V2_URL = void 0;
+exports.OUTPUT_VERSION = exports.INPUT_PROPERTIES = exports.INPUT_EULA = exports.INPUT_VERSION = exports.MINECRAFT = exports.VERSION_MANIFEST_V2_URL = void 0;
 exports.VERSION_MANIFEST_V2_URL = "https://launchermeta.mojang.com/mc/game/version_manifest_v2.json";
 exports.MINECRAFT = "minecraft";
 exports.INPUT_VERSION = "version";
 exports.INPUT_EULA = "eula";
+exports.INPUT_PROPERTIES = [
+    "online-mode",
+    "prevent-proxy-connections",
+    "server-ip",
+    "spawn-animals",
+    "spawn-npcs",
+    "pvp",
+    "allow-flight",
+    "resource-pack",
+    "require-resource-pack",
+    "resource-pack-prompt",
+    "motd",
+    "force-gamemode",
+    "enforce-whitelist",
+    "difficulty",
+    "gamemode",
+    "level-name",
+    "server-port",
+    "enable-query",
+    "query.port",
+    "enable-rcon",
+    "rcon.port",
+    "rcon.password",
+    "resource-pack-sha1",
+    "hardcore",
+    "allow-nether",
+    "spawn-monsters",
+    "snooper-enabled",
+    "use-native-transport",
+    "enable-command-block",
+    "spawn-protection",
+    "op-permission-level",
+    "function-permission-level",
+    "max-tick-time",
+    "rate-limit",
+    "view-distance",
+    "max-players",
+    "network-compression-threshold",
+    "broadcast-rcon-to-ops",
+    "broadcast-console-to-ops",
+    "max-world-size",
+    "sync-chunk-writes",
+    "enable-jmx-monitoring",
+    "enable-status",
+    "entity-broadcast-range-percentage",
+    "text-filtering-config",
+    "player-idle-timeout",
+    "white-list",
+    "generator-settings",
+    "level-seed",
+    "generate-structures",
+    "level-type"
+];
 exports.OUTPUT_VERSION = "version";
 //# sourceMappingURL=constants.js.map
 
@@ -59422,11 +59475,19 @@ function downloadServer(url) {
         }));
     });
 }
-function writeEula(eula) {
+function writeEula() {
     return __awaiter(this, void 0, void 0, function* () {
         const path = `${constants_1.MINECRAFT}/eula.txt`;
+        const eula = core_1.getInput(constants_1.INPUT_EULA) === "true";
         yield promises_1.mkdir(path_1.dirname(path), { recursive: true });
         return promises_1.writeFile(path, `eula=${eula}`);
+    });
+}
+function writeProperties() {
+    return __awaiter(this, void 0, void 0, function* () {
+        const path = `${constants_1.MINECRAFT}/server.properties`;
+        const properties = constants_1.INPUT_PROPERTIES.map(property => promises_1.appendFile(path, `${property}=${core_1.getInput(property)}`));
+        return Promise.all(properties);
     });
 }
 function run() {
@@ -59454,8 +59515,8 @@ function run() {
                 yield downloadServer(targetVersion.downloads.server.url);
                 yield cache_1.saveCache(paths, key);
             }
-            const eula = core_1.getInput(constants_1.INPUT_EULA) === "true";
-            yield writeEula(eula);
+            yield writeEula();
+            yield writeProperties();
             core_1.setOutput(constants_1.OUTPUT_VERSION, versionEntry.id);
         }
         catch (error) {

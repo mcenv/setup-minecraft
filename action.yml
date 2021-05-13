@@ -9,6 +9,210 @@ inputs:
     description: 'Set this option if you agree to Minecraft EULA (https://account.mojang.com/documents/minecraft_eula)'
     required: true
     default: false
+  online-mode:
+    description: 'online-mode'
+    required: false
+    default: true
+  prevent-proxy-connections:
+    description: 'prevent-proxy-connections'
+    required: false
+    default: false
+  server-ip:
+    description: 'server-ip'
+    required: false
+    default: ''
+  spawn-animals:
+    description: 'spawn-animals'
+    required: false
+    default: true
+  spawn-npcs:
+    description: 'spawn-npcs'
+    required: false
+    default: true
+  pvp:
+    description: 'pvp'
+    required: false
+    default: true
+  allow-flight:
+    description: 'allow-flight'
+    required: false
+    default: false
+  resource-pack:
+    description: 'resource-pack'
+    required: false
+    default: ''
+  require-resource-pack:
+    description: 'require-resource-pack'
+    required: false
+    default: false
+  resource-pack-prompt:
+    description: 'resource-pack-prompt'
+    required: false
+    default: ''
+  motd:
+    description: 'motd'
+    required: false
+    default: 'A Minecraft Server'
+  force-gamemode:
+    description: 'force-gamemode'
+    required: false
+    default: false
+  enforce-whitelist:
+    description: 'enforce-whitelist'
+    required: false
+    default: false
+  difficulty:
+    description: 'difficulty'
+    required: false
+    default: 'easy'
+  gamemode:
+    description: 'gamemode'
+    required: false
+    default: 'survival'
+  level-name:
+    description: 'level-name'
+    required: false
+    default: 'world'
+  server-port:
+    description: 'server-port'
+    required: false
+    default: 25565
+  enable-query:
+    description: 'enable-query'
+    required: false
+    default: false
+  query.port:
+    description: 'query.port'
+    required: false
+    default: 25565
+  enable-rcon:
+    description: 'enable-rcon'
+    required: false
+    default: false
+  rcon.port:
+    description: 'rcon.port'
+    required: false
+    default: 25575
+  rcon.password:
+    description: 'rcon.password'
+    required: false
+    default: ''
+  resource-pack-sha1:
+    description: 'resource-pack-sha1'
+    required: false
+    default: ''
+  hardcore:
+    description: 'hardcore'
+    required: false
+    default: false
+  allow-nether:
+    description: 'allow-nether'
+    required: false
+    default: true
+  spawn-monsters:
+    description: 'spawn-monsters'
+    required: false
+    default: true
+  snooper-enabled:
+    description: 'snooper-enabled'
+    required: false
+    default: true
+  use-native-transport:
+    description: 'use-native-transport'
+    required: false
+    default: true
+  enable-command-block:
+    description: 'enable-command-block'
+    required: false
+    default: false
+  spawn-protection:
+    description: 'spawn-protection'
+    required: false
+    default: 16
+  op-permission-level:
+    description: 'op-permission-level'
+    required: false
+    default: 4
+  function-permission-level:
+    description: 'function-permission-level'
+    required: false
+    default: 2
+  max-tick-time:
+    description: 'max-tick-time'
+    required: false
+    default: 60000
+  rate-limit:
+    description: 'rate-limit'
+    required: false
+    default: 0
+  view-distance:
+    description: 'view-distance'
+    required: false
+    default: 10
+  max-players:
+    description: 'max-players'
+    required: false
+    default: 20
+  network-compression-threshold:
+    description: 'network-compression-threshold'
+    required: false
+    default: 256
+  broadcast-rcon-to-ops:
+    description: 'broadcast-rcon-to-ops'
+    required: false
+    default: true
+  broadcast-console-to-ops:
+    description: 'broadcast-console-to-ops'
+    required: false
+    default: true
+  max-world-size:
+    description: 'max-world-size'
+    required: false
+    default: 29999984
+  sync-chunk-writes:
+    description: 'sync-chunk-writes'
+    required: false
+    default: true
+  enable-jmx-monitoring:
+    description: 'enable-jmx-monitoring'
+    required: false
+    default: false
+  enable-status:
+    description: 'enable-status'
+    required: false
+    default: true
+  entity-broadcast-range-percentage:
+    description: 'entity-broadcast-range-percentage'
+    required: false
+    default: 100
+  text-filtering-config:
+    description: 'text-filtering-config'
+    required: false
+    default: ''
+  player-idle-timeout:
+    description: 'player-idle-timeout'
+    required: false
+    default: 0
+  white-list:
+    description: 'white-list'
+    required: false
+    default: false
+  generator-settings:
+    description: 'generator-settings'
+    required: false
+    default: ''
+  level-seed:
+    description: 'level-seed'
+    required: false
+    default: ''
+  generate-structures:
+    description: 'generate-structures'
+    required: false
+    default: true
+  level-type:
+    description: 'level-type'
+    required: false
+    default: 'default'
 outputs:
   version:
     description: 'Used Minecraft version'

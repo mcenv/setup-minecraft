@@ -1,10 +1,10 @@
 import { getInput, setFailed, setOutput } from "@actions/core";
 import { restoreCache, saveCache } from "@actions/cache";
 import { createWriteStream } from "fs";
-import { mkdir, writeFile } from "fs/promises";
+import { appendFile, mkdir, writeFile } from "fs/promises";
 import * as https from "https";
 import { dirname } from "path";
-import { INPUT_EULA, INPUT_VERSION, MINECRAFT, OUTPUT_VERSION, VERSION_MANIFEST_V2_URL } from "./constants";
+import { INPUT_EULA, INPUT_PROPERTIES, INPUT_VERSION, MINECRAFT, OUTPUT_VERSION, VERSION_MANIFEST_V2_URL } from "./constants";
 
 interface VersionManifestV2 {
     latest: {
@@ -53,10 +53,17 @@ async function downloadServer(url: string): Promise<void> {
     }));
 }
 
-async function writeEula(eula: boolean): Promise<void> {
-    const path = `${MINECRAFT}/eula.txt`
+async function writeEula(): Promise<void> {
+    const path = `${MINECRAFT}/eula.txt`;
+    const eula = getInput(INPUT_EULA) === "true";
     await mkdir(dirname(path), { recursive: true });
     return writeFile(path, `eula=${eula}`);
+}
+
+async function writeProperties(): Promise<void[]> {
+    const path = `${MINECRAFT}/server.properties`;
+    const properties = INPUT_PROPERTIES.map(property => appendFile(path, `${property}=${getInput(property)}`));
+    return Promise.all(properties);
 }
 
 async function run(): Promise<void> {
@@ -87,8 +94,8 @@ async function run(): Promise<void> {
             await saveCache(paths, key);
         }
 
-        const eula = getInput(INPUT_EULA) === "true";
-        await writeEula(eula);
+        await writeEula();
+        await writeProperties();
 
         setOutput(OUTPUT_VERSION, versionEntry.id);
     } catch (error) {
