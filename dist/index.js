@@ -59449,8 +59449,8 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 const core_1 = __nccwpck_require__(2186);
 const cache_1 = __nccwpck_require__(7799);
+const fs = __nccwpck_require__(5747);
 const fs_1 = __nccwpck_require__(5747);
-const promises_1 = __nccwpck_require__(9225);
 const https = __nccwpck_require__(7211);
 const path_1 = __nccwpck_require__(5622);
 const constants_1 = __nccwpck_require__(1107);
@@ -59467,10 +59467,10 @@ function getJson(url) {
 function downloadServer(url) {
     return __awaiter(this, void 0, void 0, function* () {
         const path = path_1.join(constants_1.MINECRAFT, "server.jar");
-        yield promises_1.mkdir(path_1.dirname(path), { recursive: true });
+        yield fs_1.promises.mkdir(path_1.dirname(path), { recursive: true });
         return new Promise(resolve => https.get(url, res => {
             res
-                .pipe(fs_1.createWriteStream(path))
+                .pipe(fs.createWriteStream(path))
                 .on("end", () => resolve());
         }));
     });
@@ -59479,14 +59479,14 @@ function writeEula() {
     return __awaiter(this, void 0, void 0, function* () {
         const path = path_1.join(constants_1.MINECRAFT, "eula.txt");
         const eula = core_1.getInput(constants_1.INPUT_EULA) === "true";
-        yield promises_1.mkdir(path_1.dirname(path), { recursive: true });
-        return promises_1.writeFile(path, `eula=${eula}`);
+        yield fs_1.promises.mkdir(path_1.dirname(path), { recursive: true });
+        return fs_1.promises.writeFile(path, `eula=${eula}`);
     });
 }
 function writeProperties() {
     return __awaiter(this, void 0, void 0, function* () {
         const path = path_1.join(constants_1.MINECRAFT, "server.properties");
-        const properties = constants_1.INPUT_PROPERTIES.map(property => promises_1.appendFile(path, `${property}=${core_1.getInput(property)}\n`));
+        const properties = constants_1.INPUT_PROPERTIES.map(property => fs_1.promises.appendFile(path, `${property}=${core_1.getInput(property)}\n`));
         return Promise.all(properties);
     });
 }
@@ -59598,14 +59598,6 @@ module.exports = require("events");;
 
 "use strict";
 module.exports = require("fs");;
-
-/***/ }),
-
-/***/ 9225:
-/***/ ((module) => {
-
-"use strict";
-module.exports = require("fs/promises");;
 
 /***/ }),
 
