@@ -1,11 +1,10 @@
-import { setFailed } from "@actions/core";
+import { getInput, setFailed, setOutput } from "@actions/core";
 import { restoreCache, saveCache } from "@actions/cache";
 import { createWriteStream } from "fs";
-import { mkdir } from "fs/promises";
+import { mkdir, writeFile } from "fs/promises";
 import * as https from "https";
 import { dirname } from "path";
-
-const versionManifestV2Url = "https://launchermeta.mojang.com/mc/game/version_manifest_v2.json";
+import { INPUT_EULA, INPUT_VERSION, MINECRAFT, OUTPUT_VERSION, VERSION_MANIFEST_V2_URL } from "./constants";
 
 interface VersionManifestV2 {
     latest: {
@@ -44,7 +43,8 @@ async function getJson<T>(url: string): Promise<T> {
     }));
 }
 
-async function download(path: string, url: string): Promise<void> {
+async function downloadServer(url: string): Promise<void> {
+    const path = `${MINECRAFT}/server.jar`;
     await mkdir(dirname(path), { recursive: true });
     return new Promise(resolve => https.get(url, res => {
         res
@@ -53,21 +53,44 @@ async function download(path: string, url: string): Promise<void> {
     }));
 }
 
-async function run() {
+async function writeEula(eula: boolean): Promise<void> {
+    const path = `${MINECRAFT}/eula.txt`
+    await mkdir(dirname(path), { recursive: true });
+    return writeFile(path, `eula=${eula}`);
+}
+
+async function run(): Promise<void> {
     try {
-        const versionManifest = await getJson<VersionManifestV2>(versionManifestV2Url);
-        const latestSnapshot = versionManifest.latest.snapshot;
-        const latestVersion = versionManifest.versions.find(version => version.id === latestSnapshot)!;
+        const versionManifest = await getJson<VersionManifestV2>(VERSION_MANIFEST_V2_URL);
 
-        const key = `minecraft-${latestVersion.id}`;
-        const paths = ["minecraft"];
+        let version = getInput(INPUT_VERSION);
+        switch (version) {
+            case "release":
+                version = versionManifest.latest.release;
+                break;
+            case "snapshot":
+                version = versionManifest.latest.snapshot;
+                break;
+        }
+
+        const versionEntry = versionManifest.versions.find(v => v.id === version);
+        if (!versionEntry) {
+            throw Error(`Version ${version} not found`);
+        }
+
+        const key = `${MINECRAFT}-${versionEntry.id}`;
+        const paths = [MINECRAFT];
         const cacheKey = await restoreCache(paths, key);
-
         if (!cacheKey) {
-            const version = await getJson<Version>(latestVersion.url);
-            await download("minecraft/server.jar", version.downloads.server.url);
+            const targetVersion = await getJson<Version>(versionEntry.url);
+            await downloadServer(targetVersion.downloads.server.url);
             await saveCache(paths, key);
         }
+
+        const eula = getInput(INPUT_EULA) === "true";
+        await writeEula(eula);
+
+        setOutput(OUTPUT_VERSION, versionEntry.id);
     } catch (error) {
         setFailed(error.message);
     }

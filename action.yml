@@ -1,5 +1,17 @@
 name: 'Setup Minecraft'
 description: 'Setup a Minecraft server'
+inputs:
+  version:
+    description: 'Minecraft version to use'
+    required: false
+    default: 'snapshot'
+  eula:
+    description: 'Set this option if you agree to Minecraft EULA (https://account.mojang.com/documents/minecraft_eula)'
+    required: true
+    default: false
+outputs:
+  version:
+    description: 'Used Minecraft version'
 runs:
   using: 'node12'
   main: 'dist/index.js'
