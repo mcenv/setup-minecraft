@@ -59363,6 +59363,22 @@ module.exports = v4;
 
 /***/ }),
 
+/***/ 1107:
+/***/ ((__unused_webpack_module, exports) => {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.OUTPUT_VERSION = exports.INPUT_EULA = exports.INPUT_VERSION = exports.MINECRAFT = exports.VERSION_MANIFEST_V2_URL = void 0;
+exports.VERSION_MANIFEST_V2_URL = "https://launchermeta.mojang.com/mc/game/version_manifest_v2.json";
+exports.MINECRAFT = "minecraft";
+exports.INPUT_VERSION = "version";
+exports.INPUT_EULA = "eula";
+exports.OUTPUT_VERSION = "version";
+//# sourceMappingURL=constants.js.map
+
+/***/ }),
+
 /***/ 6971:
 /***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
 
@@ -59384,7 +59400,7 @@ const fs_1 = __nccwpck_require__(5747);
 const promises_1 = __nccwpck_require__(9225);
 const https = __nccwpck_require__(7211);
 const path_1 = __nccwpck_require__(5622);
-const versionManifestV2Url = "https://launchermeta.mojang.com/mc/game/version_manifest_v2.json";
+const constants_1 = __nccwpck_require__(1107);
 function getJson(url) {
     return __awaiter(this, void 0, void 0, function* () {
         return new Promise(resolve => https.get(url, res => {
@@ -59395,8 +59411,9 @@ function getJson(url) {
         }));
     });
 }
-function download(path, url) {
+function downloadServer(url) {
     return __awaiter(this, void 0, void 0, function* () {
+        const path = `${constants_1.MINECRAFT}/server.jar`;
         yield promises_1.mkdir(path_1.dirname(path), { recursive: true });
         return new Promise(resolve => https.get(url, res => {
             res
@@ -59405,20 +59422,41 @@ function download(path, url) {
         }));
     });
 }
+function writeEula(eula) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const path = `${constants_1.MINECRAFT}/eula.txt`;
+        yield promises_1.mkdir(path_1.dirname(path), { recursive: true });
+        return promises_1.writeFile(path, `eula=${eula}`);
+    });
+}
 function run() {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            const versionManifest = yield getJson(versionManifestV2Url);
-            const latestSnapshot = versionManifest.latest.snapshot;
-            const latestVersion = versionManifest.versions.find(version => version.id === latestSnapshot);
-            const key = `minecraft-${latestVersion.id}`;
-            const paths = ["minecraft"];
+            const versionManifest = yield getJson(constants_1.VERSION_MANIFEST_V2_URL);
+            let version = core_1.getInput(constants_1.INPUT_VERSION);
+            switch (version) {
+                case "release":
+                    version = versionManifest.latest.release;
+                    break;
+                case "snapshot":
+                    version = versionManifest.latest.snapshot;
+                    break;
+            }
+            const versionEntry = versionManifest.versions.find(v => v.id === version);
+            if (!versionEntry) {
+                throw Error(`Version ${version} not found`);
+            }
+            const key = `${constants_1.MINECRAFT}-${versionEntry.id}`;
+            const paths = [constants_1.MINECRAFT];
             const cacheKey = yield cache_1.restoreCache(paths, key);
             if (!cacheKey) {
-                const version = yield getJson(latestVersion.url);
-                yield download("minecraft/server.jar", version.downloads.server.url);
+                const targetVersion = yield getJson(versionEntry.url);
+                yield downloadServer(targetVersion.downloads.server.url);
                 yield cache_1.saveCache(paths, key);
             }
+            const eula = core_1.getInput(constants_1.INPUT_EULA) === "true";
+            yield writeEula(eula);
+            core_1.setOutput(constants_1.OUTPUT_VERSION, versionEntry.id);
         }
         catch (error) {
             core_1.setFailed(error.message);
