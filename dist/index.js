@@ -59466,7 +59466,7 @@ function getJson(url) {
 }
 function downloadServer(url) {
     return __awaiter(this, void 0, void 0, function* () {
-        const path = `${constants_1.MINECRAFT}/server.jar`;
+        const path = path_1.join(constants_1.MINECRAFT, "server.jar");
         yield promises_1.mkdir(path_1.dirname(path), { recursive: true });
         return new Promise(resolve => https.get(url, res => {
             res
@@ -59477,7 +59477,7 @@ function downloadServer(url) {
 }
 function writeEula() {
     return __awaiter(this, void 0, void 0, function* () {
-        const path = `${constants_1.MINECRAFT}/eula.txt`;
+        const path = path_1.join(constants_1.MINECRAFT, "eula.txt");
         const eula = core_1.getInput(constants_1.INPUT_EULA) === "true";
         yield promises_1.mkdir(path_1.dirname(path), { recursive: true });
         return promises_1.writeFile(path, `eula=${eula}`);
@@ -59485,7 +59485,7 @@ function writeEula() {
 }
 function writeProperties() {
     return __awaiter(this, void 0, void 0, function* () {
-        const path = `${constants_1.MINECRAFT}/server.properties`;
+        const path = path_1.join(constants_1.MINECRAFT, "server.properties");
         const properties = constants_1.INPUT_PROPERTIES.map(property => promises_1.appendFile(path, `${property}=${core_1.getInput(property)}\n`));
         return Promise.all(properties);
     });

@@ -3,7 +3,7 @@ import { restoreCache, saveCache } from "@actions/cache";
 import { createWriteStream } from "fs";
 import { appendFile, mkdir, writeFile } from "fs/promises";
 import * as https from "https";
-import { dirname } from "path";
+import { dirname, join } from "path";
 import { INPUT_EULA, INPUT_PROPERTIES, INPUT_VERSION, MINECRAFT, OUTPUT_VERSION, VERSION_MANIFEST_V2_URL } from "./constants";
 
 interface VersionManifestV2 {
@@ -44,7 +44,7 @@ async function getJson<T>(url: string): Promise<T> {
 }
 
 async function downloadServer(url: string): Promise<void> {
-    const path = `${MINECRAFT}/server.jar`;
+    const path = join(MINECRAFT, "server.jar");
     await mkdir(dirname(path), { recursive: true });
     return new Promise(resolve => https.get(url, res => {
         res
@@ -54,14 +54,14 @@ async function downloadServer(url: string): Promise<void> {
 }
 
 async function writeEula(): Promise<void> {
-    const path = `${MINECRAFT}/eula.txt`;
+    const path = join(MINECRAFT, "eula.txt");
     const eula = getInput(INPUT_EULA) === "true";
     await mkdir(dirname(path), { recursive: true });
     return writeFile(path, `eula=${eula}`);
 }
 
 async function writeProperties(): Promise<void[]> {
-    const path = `${MINECRAFT}/server.properties`;
+    const path = join(MINECRAFT, "server.properties");
     const properties = INPUT_PROPERTIES.map(property => appendFile(path, `${property}=${getInput(property)}\n`));
     return Promise.all(properties);
 }
