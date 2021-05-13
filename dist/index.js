@@ -59486,7 +59486,7 @@ function writeEula() {
 function writeProperties() {
     return __awaiter(this, void 0, void 0, function* () {
         const path = `${constants_1.MINECRAFT}/server.properties`;
-        const properties = constants_1.INPUT_PROPERTIES.map(property => promises_1.appendFile(path, `${property}=${core_1.getInput(property)}`));
+        const properties = constants_1.INPUT_PROPERTIES.map(property => promises_1.appendFile(path, `${property}=${core_1.getInput(property)}\n`));
         return Promise.all(properties);
     });
 }

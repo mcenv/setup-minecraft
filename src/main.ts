@@ -62,7 +62,7 @@ async function writeEula(): Promise<void> {
 
 async function writeProperties(): Promise<void[]> {
     const path = `${MINECRAFT}/server.properties`;
-    const properties = INPUT_PROPERTIES.map(property => appendFile(path, `${property}=${getInput(property)}`));
+    const properties = INPUT_PROPERTIES.map(property => appendFile(path, `${property}=${getInput(property)}\n`));
     return Promise.all(properties);
 }
 
