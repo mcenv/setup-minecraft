@@ -59467,7 +59467,6 @@ function getJson(url) {
 function downloadServer(url) {
     return __awaiter(this, void 0, void 0, function* () {
         const path = path_1.join(constants_1.MINECRAFT, "server.jar");
-        yield fs_1.promises.mkdir(path_1.dirname(path), { recursive: true });
         return new Promise(resolve => https.get(url, res => {
             res
                 .pipe(fs.createWriteStream(path))
@@ -59479,20 +59478,23 @@ function writeEula() {
     return __awaiter(this, void 0, void 0, function* () {
         const path = path_1.join(constants_1.MINECRAFT, "eula.txt");
         const eula = core_1.getInput(constants_1.INPUT_EULA) === "true";
-        yield fs_1.promises.mkdir(path_1.dirname(path), { recursive: true });
         return fs_1.promises.writeFile(path, `eula=${eula}`);
     });
 }
 function writeProperties() {
     return __awaiter(this, void 0, void 0, function* () {
         const path = path_1.join(constants_1.MINECRAFT, "server.properties");
-        const properties = constants_1.INPUT_PROPERTIES.map(property => fs_1.promises.appendFile(path, `${property}=${core_1.getInput(property)}\n`));
+        const properties = constants_1.INPUT_PROPERTIES.map(key => {
+            const value = core_1.getInput(key);
+            fs_1.promises.appendFile(path, `${key}=${value}\n`);
+        });
         return Promise.all(properties);
     });
 }
 function run() {
     return __awaiter(this, void 0, void 0, function* () {
         try {
+            fs.mkdirSync(constants_1.MINECRAFT, { recursive: true });
             const versionManifest = yield getJson(constants_1.VERSION_MANIFEST_V2_URL);
             let version = core_1.getInput(constants_1.INPUT_VERSION);
             switch (version) {
