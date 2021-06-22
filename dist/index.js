@@ -59503,6 +59503,8 @@ function run() {
             if (!versionEntry) {
                 throw Error(`Version ${version} not found`);
             }
+            writeEula();
+            writeProperties();
             const key = `${constants_1.MINECRAFT}-${versionEntry.id}`;
             const paths = [constants_1.MINECRAFT];
             const cacheKey = yield cache_1.restoreCache(paths, key);
@@ -59511,8 +59513,6 @@ function run() {
                 yield downloadServer(targetVersion.downloads.server.url);
                 yield cache_1.saveCache(paths, key);
             }
-            writeEula();
-            writeProperties();
             core_1.setOutput(constants_1.OUTPUT_VERSION, versionEntry.id);
         }
         catch (error) {

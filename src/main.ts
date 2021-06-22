@@ -86,6 +86,9 @@ async function run(): Promise<void> {
             throw Error(`Version ${version} not found`);
         }
 
+        writeEula();
+        writeProperties();
+
         const key = `${MINECRAFT}-${versionEntry.id}`;
         const paths = [MINECRAFT];
         const cacheKey = await restoreCache(paths, key);
@@ -94,9 +97,6 @@ async function run(): Promise<void> {
             await downloadServer(targetVersion.downloads.server.url);
             await saveCache(paths, key);
         }
-
-        writeEula();
-        writeProperties();
 
         setOutput(OUTPUT_VERSION, versionEntry.id);
     } catch (error) {
