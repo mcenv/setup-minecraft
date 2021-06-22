@@ -1,7 +1,6 @@
 import { getInput, setFailed, setOutput } from "@actions/core";
 import { restoreCache, saveCache } from "@actions/cache";
 import * as fs from "fs";
-import { promises as fsp } from "fs";
 import * as https from "https";
 import { join } from "path";
 import { INPUT_EULA, INPUT_PROPERTIES, INPUT_VERSION, MINECRAFT, OUTPUT_VERSION, VERSION_MANIFEST_V2_URL } from "./constants";
@@ -52,19 +51,18 @@ async function downloadServer(url: string): Promise<void> {
     }));
 }
 
-async function writeEula(): Promise<void> {
+function writeEula(): void {
     const path = join(MINECRAFT, "eula.txt");
     const eula = getInput(INPUT_EULA) === "true";
-    return fsp.writeFile(path, `eula=${eula}`);
+    fs.writeFileSync(path, `eula=${eula}`);
 }
 
-async function writeProperties(): Promise<void[]> {
+function writeProperties(): void {
     const path = join(MINECRAFT, "server.properties");
-    const properties = INPUT_PROPERTIES.map(key => {
+    INPUT_PROPERTIES.forEach(key => {
         const value = getInput(key);
-        fsp.appendFile(path, `${key}=${value}\n`);
+        fs.appendFileSync(path, `${key}=${value}\n`);
     });
-    return Promise.all(properties);
 }
 
 async function run(): Promise<void> {
@@ -97,8 +95,8 @@ async function run(): Promise<void> {
             await saveCache(paths, key);
         }
 
-        await writeEula();
-        await writeProperties();
+        writeEula();
+        writeProperties();
 
         setOutput(OUTPUT_VERSION, versionEntry.id);
     } catch (error) {

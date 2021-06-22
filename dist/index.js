@@ -59450,7 +59450,6 @@ Object.defineProperty(exports, "__esModule", ({ value: true }));
 const core_1 = __nccwpck_require__(2186);
 const cache_1 = __nccwpck_require__(7799);
 const fs = __nccwpck_require__(5747);
-const fs_1 = __nccwpck_require__(5747);
 const https = __nccwpck_require__(7211);
 const path_1 = __nccwpck_require__(5622);
 const constants_1 = __nccwpck_require__(1107);
@@ -59475,20 +59474,15 @@ function downloadServer(url) {
     });
 }
 function writeEula() {
-    return __awaiter(this, void 0, void 0, function* () {
-        const path = path_1.join(constants_1.MINECRAFT, "eula.txt");
-        const eula = core_1.getInput(constants_1.INPUT_EULA) === "true";
-        return fs_1.promises.writeFile(path, `eula=${eula}`);
-    });
+    const path = path_1.join(constants_1.MINECRAFT, "eula.txt");
+    const eula = core_1.getInput(constants_1.INPUT_EULA) === "true";
+    fs.writeFileSync(path, `eula=${eula}`);
 }
 function writeProperties() {
-    return __awaiter(this, void 0, void 0, function* () {
-        const path = path_1.join(constants_1.MINECRAFT, "server.properties");
-        const properties = constants_1.INPUT_PROPERTIES.map(key => {
-            const value = core_1.getInput(key);
-            fs_1.promises.appendFile(path, `${key}=${value}\n`);
-        });
-        return Promise.all(properties);
+    const path = path_1.join(constants_1.MINECRAFT, "server.properties");
+    constants_1.INPUT_PROPERTIES.forEach(key => {
+        const value = core_1.getInput(key);
+        fs.appendFileSync(path, `${key}=${value}\n`);
     });
 }
 function run() {
@@ -59517,8 +59511,8 @@ function run() {
                 yield downloadServer(targetVersion.downloads.server.url);
                 yield cache_1.saveCache(paths, key);
             }
-            yield writeEula();
-            yield writeProperties();
+            writeEula();
+            writeProperties();
             core_1.setOutput(constants_1.OUTPUT_VERSION, versionEntry.id);
         }
         catch (error) {
