@@ -2,7 +2,7 @@ import { getBooleanInput, getInput, info, setFailed, setOutput } from "@actions/
 import { restoreCache, saveCache } from "@actions/cache";
 import * as fs from "fs";
 import * as https from "https";
-import { join } from "path";
+import * as path from "path";
 import { INPUT_EULA, INPUT_PROPERTIES, INPUT_VERSION, MINECRAFT, OUTPUT_VERSION, VERSION_MANIFEST_V2_URL } from "./constants";
 
 interface VersionManifestV2 {
@@ -43,25 +43,28 @@ async function getJson<T>(url: string): Promise<T> {
 }
 
 async function downloadServer(url: string): Promise<void> {
-    const path = join(MINECRAFT, "server.jar");
-    return new Promise(resolve => https.get(url, res => {
+    info(`Downloading server.jar from ${url} ...`);
+
+    const file = path.join(MINECRAFT, "server.jar");
+    return new Promise((resolve, reject) => https.get(url, res => {
         res
-            .pipe(fs.createWriteStream(path))
-            .on("end", () => resolve());
+            .pipe(fs.createWriteStream(file))
+            .on("finish", () => resolve())
+            .on("error", error => reject(error));
     }));
 }
 
 function writeEula(): void {
-    const path = join(MINECRAFT, "eula.txt");
+    const file = path.join(MINECRAFT, "eula.txt");
     const eula = getBooleanInput(INPUT_EULA, { required: true });
-    fs.writeFileSync(path, `eula=${eula}`);
+    fs.writeFileSync(file, `eula=${eula}`);
 }
 
 function writeProperties(): void {
-    const path = join(MINECRAFT, "server.properties");
+    const file = path.join(MINECRAFT, "server.properties");
     INPUT_PROPERTIES.forEach(key => {
         const value = getInput(key);
-        fs.appendFileSync(path, `${key}=${value}\n`);
+        fs.appendFileSync(file, `${key}=${value}\n`);
     });
 }
 

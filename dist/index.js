@@ -59533,7 +59533,7 @@ const core_1 = __nccwpck_require__(2186);
 const cache_1 = __nccwpck_require__(7799);
 const fs = __nccwpck_require__(5747);
 const https = __nccwpck_require__(7211);
-const path_1 = __nccwpck_require__(5622);
+const path = __nccwpck_require__(5622);
 const constants_1 = __nccwpck_require__(1107);
 function getJson(url) {
     return __awaiter(this, void 0, void 0, function* () {
@@ -59547,24 +59547,26 @@ function getJson(url) {
 }
 function downloadServer(url) {
     return __awaiter(this, void 0, void 0, function* () {
-        const path = path_1.join(constants_1.MINECRAFT, "server.jar");
-        return new Promise(resolve => https.get(url, res => {
+        core_1.info(`Downloading server.jar from ${url} ...`);
+        const file = path.join(constants_1.MINECRAFT, "server.jar");
+        return new Promise((resolve, reject) => https.get(url, res => {
             res
-                .pipe(fs.createWriteStream(path))
-                .on("end", () => resolve());
+                .pipe(fs.createWriteStream(file))
+                .on("finish", () => resolve())
+                .on("error", error => reject(error));
         }));
     });
 }
 function writeEula() {
-    const path = path_1.join(constants_1.MINECRAFT, "eula.txt");
+    const file = path.join(constants_1.MINECRAFT, "eula.txt");
     const eula = core_1.getBooleanInput(constants_1.INPUT_EULA, { required: true });
-    fs.writeFileSync(path, `eula=${eula}`);
+    fs.writeFileSync(file, `eula=${eula}`);
 }
 function writeProperties() {
-    const path = path_1.join(constants_1.MINECRAFT, "server.properties");
+    const file = path.join(constants_1.MINECRAFT, "server.properties");
     constants_1.INPUT_PROPERTIES.forEach(key => {
         const value = core_1.getInput(key);
-        fs.appendFileSync(path, `${key}=${value}\n`);
+        fs.appendFileSync(file, `${key}=${value}\n`);
     });
 }
 function run() {
