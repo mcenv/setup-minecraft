@@ -1,4 +1,4 @@
-import { getInput, info, setFailed, setOutput } from "@actions/core";
+import { getBooleanInput, getInput, info, setFailed, setOutput } from "@actions/core";
 import { restoreCache, saveCache } from "@actions/cache";
 import * as fs from "fs";
 import * as https from "https";
@@ -53,7 +53,7 @@ async function downloadServer(url: string): Promise<void> {
 
 function writeEula(): void {
     const path = join(MINECRAFT, "eula.txt");
-    const eula = getInput(INPUT_EULA) === "true";
+    const eula = getBooleanInput(INPUT_EULA, { required: true });
     fs.writeFileSync(path, `eula=${eula}`);
 }
 
