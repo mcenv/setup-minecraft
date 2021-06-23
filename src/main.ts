@@ -1,4 +1,4 @@
-import { getInput, setFailed, setOutput } from "@actions/core";
+import { getInput, info, setFailed, setOutput } from "@actions/core";
 import { restoreCache, saveCache } from "@actions/cache";
 import * as fs from "fs";
 import * as https from "https";
@@ -98,7 +98,11 @@ async function run(): Promise<void> {
             await saveCache(paths, key);
         }
 
-        setOutput(OUTPUT_VERSION, versionEntry.id);
+        setOutput(OUTPUT_VERSION, version);
+
+        info("Minecraft:");
+        info(`  Version: ${version}`);
+        info(`  Path: ${MINECRAFT}`);
     } catch (error) {
         setFailed(error.message);
     }

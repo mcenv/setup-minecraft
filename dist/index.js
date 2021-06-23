@@ -59513,7 +59513,10 @@ function run() {
                 yield downloadServer(targetVersion.downloads.server.url);
                 yield cache_1.saveCache(paths, key);
             }
-            core_1.setOutput(constants_1.OUTPUT_VERSION, versionEntry.id);
+            core_1.setOutput(constants_1.OUTPUT_VERSION, version);
+            core_1.info("Minecraft:");
+            core_1.info(`  Version: ${version}`);
+            core_1.info(`  Path: ${constants_1.MINECRAFT}`);
         }
         catch (error) {
             core_1.setFailed(error.message);
