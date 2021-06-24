@@ -6,34 +6,7 @@ import * as tc from "@actions/tool-cache";
 import * as fs from "fs";
 import * as path from "path";
 import { INPUT_VERSION, MINECRAFT, OUTPUT_VERSION, SCRIPT, SERVER, VERSION_MANIFEST_V2_URL } from "./constants";
-
-interface VersionManifestV2 {
-    latest: {
-        release: string,
-        snapshot: string
-    },
-    versions: [
-        {
-            id: string,
-            type: "release" | "snapshot",
-            url: string,
-            time: string,
-            releaseTime: string,
-            sha1: string,
-            complianceLevel: number
-        }
-    ]
-}
-
-interface Version {
-    downloads: {
-        server: {
-            sha1: string,
-            size: number,
-            url: string
-        }
-    }
-}
+import type { Version, VersionManifestV2 } from "./types";
 
 async function getJson<T>(http: HttpClient, url: string): Promise<T> {
     const response = await http.get(url);
