@@ -1,9 +1,9 @@
-import { getBooleanInput, getInput, info, setFailed, setOutput } from "@actions/core";
+import { getInput, info, setFailed, setOutput } from "@actions/core";
 import { restoreCache, saveCache } from "@actions/cache";
 import * as fs from "fs";
 import * as https from "https";
 import * as path from "path";
-import { INPUT_EULA, INPUT_PROPERTIES, INPUT_VERSION, MINECRAFT, OUTPUT_VERSION, VERSION_MANIFEST_V2_URL } from "./constants";
+import { INPUT_VERSION, MINECRAFT, OUTPUT_VERSION, VERSION_MANIFEST_V2_URL } from "./constants";
 
 interface VersionManifestV2 {
     latest: {
@@ -54,20 +54,6 @@ async function downloadServer(url: string): Promise<void> {
     }));
 }
 
-function writeEula(): void {
-    const file = path.join(MINECRAFT, "eula.txt");
-    const eula = getBooleanInput(INPUT_EULA, { required: true });
-    fs.writeFileSync(file, `eula=${eula}`);
-}
-
-function writeProperties(): void {
-    const file = path.join(MINECRAFT, "server.properties");
-    INPUT_PROPERTIES.forEach(key => {
-        const value = getInput(key);
-        fs.appendFileSync(file, `${key}=${value}\n`);
-    });
-}
-
 async function run(): Promise<void> {
     try {
         fs.mkdirSync(MINECRAFT, { recursive: true });
@@ -88,9 +74,6 @@ async function run(): Promise<void> {
         if (!versionEntry) {
             throw Error(`Version ${version} not found`);
         }
-
-        writeEula();
-        writeProperties();
 
         const key = `${MINECRAFT}-${versionEntry.id}`;
         const paths = [MINECRAFT];
