@@ -10,7 +10,7 @@
     "license": "MIT",
     "dependencies": {
         "@actions/cache": "^1.0.7",
-        "@actions/core": "^1.4.0",
+        "@actions/core": "^1.5.0",
         "@actions/http-client": "^1.0.11",
         "@actions/io": "^1.1.1",
         "@actions/tool-cache": "^1.7.1"
