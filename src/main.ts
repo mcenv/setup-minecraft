@@ -34,7 +34,7 @@ async function run(): Promise<void> {
 
         const versionEntry = versionManifest.versions.find(v => v.id === version);
         if (!versionEntry) {
-            throw Error(`Version '${version}' not found`);
+            throw new Error(`Version '${version}' not found`);
         }
 
         await io.mkdirP(MINECRAFT);
@@ -57,7 +57,7 @@ async function run(): Promise<void> {
         core.info("Minecraft:");
         core.info(`  Version: ${version}`);
     } catch (error) {
-        core.setFailed(error.message);
+        core.setFailed(`${error}`);
     }
 }
 
