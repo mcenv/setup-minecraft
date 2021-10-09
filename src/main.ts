@@ -46,7 +46,7 @@ async function run(): Promise<void> {
             const targetVersion = await getJson<Version>(http, versionEntry.url);
             await tc.downloadTool(targetVersion.downloads.server.url, path.join(MINECRAFT, SERVER));
 
-            fs.writeFileSync(path.join(MINECRAFT, SCRIPT), `java -jar $(dirname $(realpath $0))/${SERVER} nogui`, { mode: 0o775 });
+            fs.writeFileSync(path.join(MINECRAFT, SCRIPT), `java -jar $(dirname $(realpath $0))/${SERVER} --nogui`, { mode: 0o775 });
 
             await cache.saveCache(paths, key);
         }

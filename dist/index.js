@@ -60450,7 +60450,7 @@ function run() {
             if (!cacheKey) {
                 const targetVersion = yield getJson(http, versionEntry.url);
                 yield tc.downloadTool(targetVersion.downloads.server.url, path.join(constants_1.MINECRAFT, constants_1.SERVER));
-                fs.writeFileSync(path.join(constants_1.MINECRAFT, constants_1.SCRIPT), `java -jar $(dirname $(realpath $0))/${constants_1.SERVER} nogui`, { mode: 0o775 });
+                fs.writeFileSync(path.join(constants_1.MINECRAFT, constants_1.SCRIPT), `java -jar $(dirname $(realpath $0))/${constants_1.SERVER} --nogui`, { mode: 0o775 });
                 yield cache.saveCache(paths, key);
             }
             core.addPath(constants_1.MINECRAFT);
