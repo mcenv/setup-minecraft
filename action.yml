@@ -1,4 +1,5 @@
 name: 'Setup Minecraft'
+author: 'mce'
 description: 'Setup a Minecraft server'
 inputs:
   version:
@@ -11,3 +12,6 @@ outputs:
 runs:
   using: 'node16'
   main: 'dist/index.js'
+branding:
+  icon: 'box'
+  color: 'gray-dark'
