@@ -58697,15 +58697,16 @@ module.exports.implForWrapper = function (wrapper) {
 /***/ }),
 
 /***/ 7413:
-/***/ ((__unused_webpack_module, exports) => {
+/***/ ((__unused_webpack_module, exports, __nccwpck_require__) => {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.OUTPUT_VERSION = exports.INPUT_VERSION = exports.SERVER = exports.MINECRAFT = exports.VERSION_MANIFEST_V2_URL = void 0;
+exports.OUTPUT_VERSION = exports.INPUT_VERSION = exports.SERVER_JAR = exports.MINECRAFT = exports.VERSION_MANIFEST_V2_URL = void 0;
+const path = __nccwpck_require__(1017);
 exports.VERSION_MANIFEST_V2_URL = "https://launchermeta.mojang.com/mc/game/version_manifest_v2.json";
 exports.MINECRAFT = "minecraft";
-exports.SERVER = "server.jar";
+exports.SERVER_JAR = path.join(exports.MINECRAFT, "server.jar");
 exports.INPUT_VERSION = "version";
 exports.OUTPUT_VERSION = "version";
 //# sourceMappingURL=constants.js.map
@@ -58732,13 +58733,43 @@ const core = __nccwpck_require__(2186);
 const http_client_1 = __nccwpck_require__(9925);
 const io = __nccwpck_require__(7436);
 const tc = __nccwpck_require__(7784);
-const path = __nccwpck_require__(1017);
+const crypto = __nccwpck_require__(6113);
+const fs = __nccwpck_require__(3292);
 const constants_1 = __nccwpck_require__(7413);
 function getJson(http, url) {
     return __awaiter(this, void 0, void 0, function* () {
         const response = yield http.get(url);
         const body = yield response.readBody();
         return JSON.parse(body);
+    });
+}
+function download(http, url) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const version = yield getJson(http, url);
+        yield tc.downloadTool(version.downloads.server.url, constants_1.SERVER_JAR);
+        const checkSize = new Promise((resolve, reject) => __awaiter(this, void 0, void 0, function* () {
+            const expectedSize = version.downloads.server.size;
+            const actualSize = (yield fs.stat(constants_1.SERVER_JAR)).size;
+            if (expectedSize === actualSize) {
+                resolve();
+            }
+            else {
+                reject(`expected size: ${expectedSize}\nactual size: ${actualSize}`);
+            }
+        }));
+        const checkSha1 = new Promise((resolve, reject) => __awaiter(this, void 0, void 0, function* () {
+            const expectedSha1 = version.downloads.server.sha1;
+            const sha1 = crypto.createHash("sha1");
+            sha1.update(yield fs.readFile(constants_1.SERVER_JAR));
+            const actualSha1 = sha1.digest("hex");
+            if (expectedSha1 === actualSha1) {
+                resolve();
+            }
+            else {
+                reject(`expected sha1: ${expectedSha1}\nactual sha1: ${actualSha1}`);
+            }
+        }));
+        return Promise.all([checkSize, checkSha1]);
     });
 }
 function run() {
@@ -58766,14 +58797,13 @@ function run() {
             const paths = [constants_1.MINECRAFT];
             const cacheKey = yield cache.restoreCache(paths, key);
             if (!cacheKey) {
-                const targetVersion = yield getJson(http, versionEntry.url);
-                yield tc.downloadTool(targetVersion.downloads.server.url, path.join(constants_1.MINECRAFT, constants_1.SERVER));
+                yield download(http, versionEntry.url);
                 yield cache.saveCache(paths, key);
             }
-            core.addPath(constants_1.MINECRAFT);
             core.setOutput(constants_1.OUTPUT_VERSION, version);
             core.info("Minecraft:");
             core.info(`  Version: ${version}`);
+            core.info(`  Path: ${constants_1.SERVER_JAR}`);
         }
         catch (error) {
             core.setFailed(`${error}`);
@@ -58838,6 +58868,14 @@ module.exports = require("events");
 
 "use strict";
 module.exports = require("fs");
+
+/***/ }),
+
+/***/ 3292:
+/***/ ((module) => {
+
+"use strict";
+module.exports = require("fs/promises");
 
 /***/ }),
 
