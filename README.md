@@ -1,6 +1,6 @@
 # setup-minecraft
 
-This action downloads and caches the specific version of Minecraft.
+This action downloads and caches a specific version of Minecraft.
 
 ## Inputs
 
@@ -17,6 +17,7 @@ Minecraft version used.
 ## Example usage
 
 ```yml
+- uses: actions/checkout@v3
 - id: minecraft
   uses: mcenv/setup-minecraft@v1
   with:
