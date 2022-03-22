@@ -4,7 +4,7 @@ import { HttpClient } from "@actions/http-client";
 import * as io from "@actions/io";
 import * as tc from "@actions/tool-cache";
 import * as crypto from "crypto";
-import * as fs from "fs/promises";
+import { promises as fs } from "fs";
 import { INPUT_VERSION, MINECRAFT, OUTPUT_VERSION, SERVER_JAR, VERSION_MANIFEST_V2_URL } from "./constants";
 import type { Version, VersionManifestV2 } from "./types";
 

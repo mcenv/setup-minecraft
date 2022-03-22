@@ -58734,7 +58734,7 @@ const http_client_1 = __nccwpck_require__(9925);
 const io = __nccwpck_require__(7436);
 const tc = __nccwpck_require__(7784);
 const crypto = __nccwpck_require__(6113);
-const fs = __nccwpck_require__(3292);
+const fs_1 = __nccwpck_require__(7147);
 const constants_1 = __nccwpck_require__(7413);
 function getJson(http, url) {
     return __awaiter(this, void 0, void 0, function* () {
@@ -58749,7 +58749,7 @@ function download(http, url) {
         yield tc.downloadTool(version.downloads.server.url, constants_1.SERVER_JAR);
         const checkSize = new Promise((resolve, reject) => __awaiter(this, void 0, void 0, function* () {
             const expectedSize = version.downloads.server.size;
-            const actualSize = (yield fs.stat(constants_1.SERVER_JAR)).size;
+            const actualSize = (yield fs_1.promises.stat(constants_1.SERVER_JAR)).size;
             if (expectedSize === actualSize) {
                 resolve();
             }
@@ -58760,7 +58760,7 @@ function download(http, url) {
         const checkSha1 = new Promise((resolve, reject) => __awaiter(this, void 0, void 0, function* () {
             const expectedSha1 = version.downloads.server.sha1;
             const sha1 = crypto.createHash("sha1");
-            sha1.update(yield fs.readFile(constants_1.SERVER_JAR));
+            sha1.update(yield fs_1.promises.readFile(constants_1.SERVER_JAR));
             const actualSha1 = sha1.digest("hex");
             if (expectedSha1 === actualSha1) {
                 resolve();
@@ -58868,14 +58868,6 @@ module.exports = require("events");
 
 "use strict";
 module.exports = require("fs");
-
-/***/ }),
-
-/***/ 3292:
-/***/ ((module) => {
-
-"use strict";
-module.exports = require("fs/promises");
 
 /***/ }),
 
