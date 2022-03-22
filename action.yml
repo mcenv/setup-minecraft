@@ -5,9 +5,6 @@ inputs:
     description: 'Minecraft version to use'
     required: false
     default: 'snapshot'
-  skippedVersion:
-    description: 'Minecraft version to be skipped'
-    required: false
 outputs:
   version:
     description: 'Minecraft version used'

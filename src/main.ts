@@ -4,7 +4,7 @@ import { HttpClient } from "@actions/http-client";
 import * as io from "@actions/io";
 import * as tc from "@actions/tool-cache";
 import * as path from "path";
-import { INPUT_SKIPPED_VERSION, INPUT_VERSION, MINECRAFT, OUTPUT_VERSION, SERVER, VERSION_MANIFEST_V2_URL } from "./constants";
+import { INPUT_VERSION, MINECRAFT, OUTPUT_VERSION, SERVER, VERSION_MANIFEST_V2_URL } from "./constants";
 import type { Version, VersionManifestV2 } from "./types";
 
 async function getJson<T>(http: HttpClient, url: string): Promise<T> {
@@ -30,12 +30,6 @@ async function run(): Promise<void> {
                     return version;
             }
         })();
-
-        const skippedVersion = core.getInput(INPUT_SKIPPED_VERSION);
-        if (version === skippedVersion) {
-            core.info(`Version '${version}' skipped`);
-            return;
-        }
 
         const versionEntry = versionManifest.versions.find(v => v.id === version);
         if (!versionEntry) {
