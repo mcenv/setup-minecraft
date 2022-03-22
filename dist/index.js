@@ -58702,11 +58702,12 @@ module.exports.implForWrapper = function (wrapper) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.OUTPUT_VERSION = exports.INPUT_VERSION = exports.SERVER = exports.MINECRAFT = exports.VERSION_MANIFEST_V2_URL = void 0;
+exports.OUTPUT_VERSION = exports.INPUT_SKIPPED_VERSION = exports.INPUT_VERSION = exports.SERVER = exports.MINECRAFT = exports.VERSION_MANIFEST_V2_URL = void 0;
 exports.VERSION_MANIFEST_V2_URL = "https://launchermeta.mojang.com/mc/game/version_manifest_v2.json";
 exports.MINECRAFT = "minecraft";
 exports.SERVER = "server.jar";
 exports.INPUT_VERSION = "version";
+exports.INPUT_SKIPPED_VERSION = "skippedVersion";
 exports.OUTPUT_VERSION = "version";
 //# sourceMappingURL=constants.js.map
 
@@ -58757,6 +58758,11 @@ function run() {
                         return version;
                 }
             })();
+            const skippedVersion = core.getInput(constants_1.INPUT_SKIPPED_VERSION);
+            if (version === skippedVersion) {
+                core.info(`Version '${version}' skipped`);
+                return;
+            }
             const versionEntry = versionManifest.versions.find(v => v.id === version);
             if (!versionEntry) {
                 throw new Error(`Version '${version}' not found`);
