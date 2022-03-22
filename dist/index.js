@@ -58702,11 +58702,10 @@ module.exports.implForWrapper = function (wrapper) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.OUTPUT_VERSION = exports.INPUT_VERSION = exports.SCRIPT = exports.SERVER = exports.MINECRAFT = exports.VERSION_MANIFEST_V2_URL = void 0;
+exports.OUTPUT_VERSION = exports.INPUT_VERSION = exports.SERVER = exports.MINECRAFT = exports.VERSION_MANIFEST_V2_URL = void 0;
 exports.VERSION_MANIFEST_V2_URL = "https://launchermeta.mojang.com/mc/game/version_manifest_v2.json";
 exports.MINECRAFT = "minecraft";
 exports.SERVER = "server.jar";
-exports.SCRIPT = "minecraft";
 exports.INPUT_VERSION = "version";
 exports.OUTPUT_VERSION = "version";
 //# sourceMappingURL=constants.js.map
@@ -58733,7 +58732,6 @@ const core = __nccwpck_require__(2186);
 const http_client_1 = __nccwpck_require__(9925);
 const io = __nccwpck_require__(7436);
 const tc = __nccwpck_require__(7784);
-const fs = __nccwpck_require__(7147);
 const path = __nccwpck_require__(1017);
 const constants_1 = __nccwpck_require__(7413);
 function getJson(http, url) {
@@ -58770,7 +58768,6 @@ function run() {
             if (!cacheKey) {
                 const targetVersion = yield getJson(http, versionEntry.url);
                 yield tc.downloadTool(targetVersion.downloads.server.url, path.join(constants_1.MINECRAFT, constants_1.SERVER));
-                fs.writeFileSync(path.join(constants_1.MINECRAFT, constants_1.SCRIPT), `java -jar $(dirname $(realpath $0))/${constants_1.SERVER} --nogui`, { mode: 0o775 });
                 yield cache.saveCache(paths, key);
             }
             core.addPath(constants_1.MINECRAFT);

@@ -3,9 +3,8 @@ import * as core from "@actions/core";
 import { HttpClient } from "@actions/http-client";
 import * as io from "@actions/io";
 import * as tc from "@actions/tool-cache";
-import * as fs from "fs";
 import * as path from "path";
-import { INPUT_VERSION, MINECRAFT, OUTPUT_VERSION, SCRIPT, SERVER, VERSION_MANIFEST_V2_URL } from "./constants";
+import { INPUT_VERSION, MINECRAFT, OUTPUT_VERSION, SERVER, VERSION_MANIFEST_V2_URL } from "./constants";
 import type { Version, VersionManifestV2 } from "./types";
 
 async function getJson<T>(http: HttpClient, url: string): Promise<T> {
@@ -45,9 +44,6 @@ async function run(): Promise<void> {
         if (!cacheKey) {
             const targetVersion = await getJson<Version>(http, versionEntry.url);
             await tc.downloadTool(targetVersion.downloads.server.url, path.join(MINECRAFT, SERVER));
-
-            fs.writeFileSync(path.join(MINECRAFT, SCRIPT), `java -jar $(dirname $(realpath $0))/${SERVER} --nogui`, { mode: 0o775 });
-
             await cache.saveCache(paths, key);
         }
 
