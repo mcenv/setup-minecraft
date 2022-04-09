@@ -22,11 +22,11 @@ Minecraft version used.
   uses: mcenv/setup-minecraft@v1
   with:
     version: "1.18.2"
-- uses: actions/setup-java@v2
+- uses: actions/setup-java@v3
   with:
     distribution: "temurin"
     java-version: "17"
 - run: |
     echo Running Minecraft ${{ steps.minecraft.outputs.version }}.
-    java -jar minecraft/server.jar nogui
+    minecraft --nogui -Xmx2G
 ```
