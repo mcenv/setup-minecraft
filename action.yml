@@ -11,7 +11,7 @@ outputs:
     description: 'Minecraft version used'
 runs:
   using: 'node16'
-  main: 'main.js'
+  main: 'dist/index.js'
 branding:
   icon: 'box'
   color: 'gray-dark'

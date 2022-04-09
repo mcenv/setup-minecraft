@@ -1,9 +1,9 @@
 {
     "name": "setup-minecraft",
     "version": "1.0.0",
-    "main": "main.js",
+    "main": "index.js",
     "scripts": {
-        "package": "ncc build main.js --source-map --license licenses.txt"
+        "package": "ncc build index.js --license licenses.txt"
     },
     "license": "MIT",
     "dependencies": {
