@@ -1,13 +1,13 @@
 // @ts-check
 
-import * as cache from "@actions/cache";
-import * as core from "@actions/core";
-import { HttpClient } from "@actions/http-client";
-import * as io from "@actions/io";
-import * as tc from "@actions/tool-cache";
-import * as crypto from "crypto";
-import { promises as fs } from "fs";
-import * as path from "path";
+const cache = require("@actions/cache");
+const core = require("@actions/core");
+const { HttpClient } = require("@actions/http-client");
+const io = require("@actions/io");
+const tc = require("@actions/tool-cache");
+const crypto = require("crypto");
+const fs = require("fs/promises");
+const path = require("path");
 
 /**
  * @typedef {{
