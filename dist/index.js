@@ -60303,9 +60303,23 @@ const path = __nccwpck_require__(1017);
  */
 
 const VERSION_MANIFEST_V2_URL = "https://launchermeta.mojang.com/mc/game/version_manifest_v2.json";
-const MINECRAFT = "minecraft";
-const SERVER_JAR = path.join(MINECRAFT, "server.jar");
+const ROOT_PATH = "minecraft";
+const SERVER_JAR_PATH = path.join(ROOT_PATH, "server.jar");
+const BIN_PATH = path.join(ROOT_PATH, "bin")
+
+const SCRIPT_PATH = path.join(BIN_PATH, "minecraft");
+const SCRIPT = `
+java $2 -jar ${SERVER_JAR_PATH} $1
+`;
+
+const SCRIPT_BAT_PATH = path.join(BIN_PATH, "minecraft.bat");
+const SCRIPT_BAT = `
+@echo off
+java %~2 -jar ${SERVER_JAR_PATH} %~1
+`;
+
 const INPUT_VERSION = "version";
+
 const OUTPUT_VERSION = "version";
 
 /**
@@ -60328,11 +60342,11 @@ async function download(http, url) {
     /** @type {Version} */
     const version = await getJson(http, url);
 
-    await tc.downloadTool(version.downloads.server.url, SERVER_JAR);
+    await tc.downloadTool(version.downloads.server.url, SERVER_JAR_PATH);
 
     const checkSize = new Promise(async (resolve, reject) => {
         const expectedSize = version.downloads.server.size;
-        const actualSize = (await fs.stat(SERVER_JAR)).size;
+        const actualSize = (await fs.stat(SERVER_JAR_PATH)).size;
         if (expectedSize === actualSize) {
             resolve();
         } else {
@@ -60343,7 +60357,7 @@ async function download(http, url) {
     const checkSha1 = new Promise(async (resolve, reject) => {
         const expectedSha1 = version.downloads.server.sha1;
         const sha1 = crypto.createHash("sha1");
-        sha1.update(await fs.readFile(SERVER_JAR));
+        sha1.update(await fs.readFile(SERVER_JAR_PATH));
         const actualSha1 = sha1.digest("hex");
         if (expectedSha1 === actualSha1) {
             resolve();
@@ -60379,21 +60393,33 @@ async function run() {
             throw new Error(`Version '${version}' not found`);
         }
 
-        await io.mkdirP(MINECRAFT);
+        await io.mkdirP(ROOT_PATH);
 
-        const key = `${MINECRAFT}-${version}`;
-        const paths = [MINECRAFT];
-        const cacheKey = await cache.restoreCache(paths, key);
-        if (!cacheKey) {
-            await download(http, versionEntry.url);
-            await cache.saveCache(paths, key);
-        }
+        const installScripts = new Promise(async resolve => {
+            await io.mkdirP(BIN_PATH);
+            core.addPath(BIN_PATH);
+            await fs.writeFile(SCRIPT_PATH, SCRIPT, { mode: 0o775 });
+            await fs.writeFile(SCRIPT_BAT_PATH, SCRIPT_BAT);
+            resolve();
+        });
+
+        const checkCache = new Promise(async resolve => {
+            const key = `${ROOT_PATH}-${version}`;
+            const paths = [ROOT_PATH];
+            const cacheKey = await cache.restoreCache(paths, key);
+            if (!cacheKey) {
+                await download(http, versionEntry.url);
+                await cache.saveCache(paths, key);
+            }
+            resolve();
+        });
+
+        await Promise.all([installScripts, checkCache]);
 
         core.setOutput(OUTPUT_VERSION, version);
 
         core.info("Minecraft:");
         core.info(`  Version: ${version}`);
-        core.info(`  Path: ${SERVER_JAR}`)
     } catch (error) {
         core.setFailed(`${error}`);
     }
