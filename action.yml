@@ -5,7 +5,7 @@ inputs:
   version:
     description: 'Minecraft version to use'
     required: false
-    default: 'snapshot'
+    default: 'release'
 outputs:
   version:
     description: 'Minecraft version used'

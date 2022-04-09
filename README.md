@@ -6,7 +6,7 @@ This action downloads and caches a specific version of Minecraft.
 
 ### `version`
 
-Minecraft version to use. Default `snapshot`.
+Minecraft version to use. Default `release`.
 
 ## Outputs
 
