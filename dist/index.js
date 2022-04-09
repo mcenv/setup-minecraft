@@ -58774,6 +58774,14 @@ module.exports = require("fs");
 
 /***/ }),
 
+/***/ 3292:
+/***/ ((module) => {
+
+"use strict";
+module.exports = require("fs/promises");
+
+/***/ }),
+
 /***/ 3685:
 /***/ ((module) => {
 
@@ -58935,81 +58943,24 @@ module.exports = JSON.parse('[[[0,44],"disallowed_STD3_valid"],[[45,46],"valid"]
 /******/ 	}
 /******/ 	
 /************************************************************************/
-/******/ 	/* webpack/runtime/compat get default export */
-/******/ 	(() => {
-/******/ 		// getDefaultExport function for compatibility with non-harmony modules
-/******/ 		__nccwpck_require__.n = (module) => {
-/******/ 			var getter = module && module.__esModule ?
-/******/ 				() => (module['default']) :
-/******/ 				() => (module);
-/******/ 			__nccwpck_require__.d(getter, { a: getter });
-/******/ 			return getter;
-/******/ 		};
-/******/ 	})();
-/******/ 	
-/******/ 	/* webpack/runtime/define property getters */
-/******/ 	(() => {
-/******/ 		// define getter functions for harmony exports
-/******/ 		__nccwpck_require__.d = (exports, definition) => {
-/******/ 			for(var key in definition) {
-/******/ 				if(__nccwpck_require__.o(definition, key) && !__nccwpck_require__.o(exports, key)) {
-/******/ 					Object.defineProperty(exports, key, { enumerable: true, get: definition[key] });
-/******/ 				}
-/******/ 			}
-/******/ 		};
-/******/ 	})();
-/******/ 	
-/******/ 	/* webpack/runtime/hasOwnProperty shorthand */
-/******/ 	(() => {
-/******/ 		__nccwpck_require__.o = (obj, prop) => (Object.prototype.hasOwnProperty.call(obj, prop))
-/******/ 	})();
-/******/ 	
-/******/ 	/* webpack/runtime/make namespace object */
-/******/ 	(() => {
-/******/ 		// define __esModule on exports
-/******/ 		__nccwpck_require__.r = (exports) => {
-/******/ 			if(typeof Symbol !== 'undefined' && Symbol.toStringTag) {
-/******/ 				Object.defineProperty(exports, Symbol.toStringTag, { value: 'Module' });
-/******/ 			}
-/******/ 			Object.defineProperty(exports, '__esModule', { value: true });
-/******/ 		};
-/******/ 	})();
-/******/ 	
 /******/ 	/* webpack/runtime/compat */
 /******/ 	
 /******/ 	if (typeof __nccwpck_require__ !== 'undefined') __nccwpck_require__.ab = __dirname + "/";
 /******/ 	
 /************************************************************************/
 var __webpack_exports__ = {};
-// This entry need to be wrapped in an IIFE because it need to be in strict mode.
+// This entry need to be wrapped in an IIFE because it need to be isolated against other modules in the chunk.
 (() => {
-"use strict";
-__nccwpck_require__.r(__webpack_exports__);
-/* harmony import */ var _actions_cache__WEBPACK_IMPORTED_MODULE_0__ = __nccwpck_require__(7799);
-/* harmony import */ var _actions_cache__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__nccwpck_require__.n(_actions_cache__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _actions_core__WEBPACK_IMPORTED_MODULE_1__ = __nccwpck_require__(2186);
-/* harmony import */ var _actions_core__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__nccwpck_require__.n(_actions_core__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var _actions_http_client__WEBPACK_IMPORTED_MODULE_2__ = __nccwpck_require__(9925);
-/* harmony import */ var _actions_io__WEBPACK_IMPORTED_MODULE_3__ = __nccwpck_require__(7436);
-/* harmony import */ var _actions_io__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__nccwpck_require__.n(_actions_io__WEBPACK_IMPORTED_MODULE_3__);
-/* harmony import */ var _actions_tool_cache__WEBPACK_IMPORTED_MODULE_4__ = __nccwpck_require__(7784);
-/* harmony import */ var _actions_tool_cache__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__nccwpck_require__.n(_actions_tool_cache__WEBPACK_IMPORTED_MODULE_4__);
-/* harmony import */ var crypto__WEBPACK_IMPORTED_MODULE_5__ = __nccwpck_require__(6113);
-/* harmony import */ var crypto__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__nccwpck_require__.n(crypto__WEBPACK_IMPORTED_MODULE_5__);
-/* harmony import */ var fs__WEBPACK_IMPORTED_MODULE_6__ = __nccwpck_require__(7147);
-/* harmony import */ var fs__WEBPACK_IMPORTED_MODULE_6___default = /*#__PURE__*/__nccwpck_require__.n(fs__WEBPACK_IMPORTED_MODULE_6__);
-/* harmony import */ var path__WEBPACK_IMPORTED_MODULE_7__ = __nccwpck_require__(1017);
-/* harmony import */ var path__WEBPACK_IMPORTED_MODULE_7___default = /*#__PURE__*/__nccwpck_require__.n(path__WEBPACK_IMPORTED_MODULE_7__);
 // @ts-check
 
-
-
-
-
-
-
-
-
+const cache = __nccwpck_require__(7799);
+const core = __nccwpck_require__(2186);
+const { HttpClient } = __nccwpck_require__(9925);
+const io = __nccwpck_require__(7436);
+const tc = __nccwpck_require__(7784);
+const crypto = __nccwpck_require__(6113);
+const fs = __nccwpck_require__(3292);
+const path = __nccwpck_require__(1017);
 
 /**
  * @typedef {{
@@ -59043,7 +58994,7 @@ __nccwpck_require__.r(__webpack_exports__);
 
 const VERSION_MANIFEST_V2_URL = "https://launchermeta.mojang.com/mc/game/version_manifest_v2.json";
 const MINECRAFT = "minecraft";
-const SERVER_JAR = path__WEBPACK_IMPORTED_MODULE_7__.join(MINECRAFT, "server.jar");
+const SERVER_JAR = path.join(MINECRAFT, "server.jar");
 const INPUT_VERSION = "version";
 const OUTPUT_VERSION = "version";
 
@@ -59067,11 +59018,11 @@ async function download(http, url) {
     /** @type {Version} */
     const version = await getJson(http, url);
 
-    await _actions_tool_cache__WEBPACK_IMPORTED_MODULE_4__.downloadTool(version.downloads.server.url, SERVER_JAR);
+    await tc.downloadTool(version.downloads.server.url, SERVER_JAR);
 
     const checkSize = new Promise(async (resolve, reject) => {
         const expectedSize = version.downloads.server.size;
-        const actualSize = (await fs__WEBPACK_IMPORTED_MODULE_6__.promises.stat(SERVER_JAR)).size;
+        const actualSize = (await fs.stat(SERVER_JAR)).size;
         if (expectedSize === actualSize) {
             resolve();
         } else {
@@ -59081,8 +59032,8 @@ async function download(http, url) {
 
     const checkSha1 = new Promise(async (resolve, reject) => {
         const expectedSha1 = version.downloads.server.sha1;
-        const sha1 = crypto__WEBPACK_IMPORTED_MODULE_5__.createHash("sha1");
-        sha1.update(await fs__WEBPACK_IMPORTED_MODULE_6__.promises.readFile(SERVER_JAR));
+        const sha1 = crypto.createHash("sha1");
+        sha1.update(await fs.readFile(SERVER_JAR));
         const actualSha1 = sha1.digest("hex");
         if (expectedSha1 === actualSha1) {
             resolve();
@@ -59096,13 +59047,13 @@ async function download(http, url) {
 
 async function run() {
     try {
-        const http = new _actions_http_client__WEBPACK_IMPORTED_MODULE_2__.HttpClient();
+        const http = new HttpClient();
 
         /** @type {VersionManifestV2} */
         const versionManifest = await getJson(http, VERSION_MANIFEST_V2_URL);
 
         const version = (() => {
-            const version = _actions_core__WEBPACK_IMPORTED_MODULE_1__.getInput(INPUT_VERSION);
+            const version = core.getInput(INPUT_VERSION);
             switch (version) {
                 case "release":
                     return versionManifest.latest.release;
@@ -59118,23 +59069,23 @@ async function run() {
             throw new Error(`Version '${version}' not found`);
         }
 
-        await _actions_io__WEBPACK_IMPORTED_MODULE_3__.mkdirP(MINECRAFT);
+        await io.mkdirP(MINECRAFT);
 
         const key = `${MINECRAFT}-${version}`;
         const paths = [MINECRAFT];
-        const cacheKey = await _actions_cache__WEBPACK_IMPORTED_MODULE_0__.restoreCache(paths, key);
+        const cacheKey = await cache.restoreCache(paths, key);
         if (!cacheKey) {
             await download(http, versionEntry.url);
-            await _actions_cache__WEBPACK_IMPORTED_MODULE_0__.saveCache(paths, key);
+            await cache.saveCache(paths, key);
         }
 
-        _actions_core__WEBPACK_IMPORTED_MODULE_1__.setOutput(OUTPUT_VERSION, version);
+        core.setOutput(OUTPUT_VERSION, version);
 
-        _actions_core__WEBPACK_IMPORTED_MODULE_1__.info("Minecraft:");
-        _actions_core__WEBPACK_IMPORTED_MODULE_1__.info(`  Version: ${version}`);
-        _actions_core__WEBPACK_IMPORTED_MODULE_1__.info(`  Path: ${SERVER_JAR}`)
+        core.info("Minecraft:");
+        core.info(`  Version: ${version}`);
+        core.info(`  Path: ${SERVER_JAR}`)
     } catch (error) {
-        _actions_core__WEBPACK_IMPORTED_MODULE_1__.setFailed(`${error}`);
+        core.setFailed(`${error}`);
     }
 }
 
