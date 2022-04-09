@@ -19,7 +19,7 @@ Minecraft version used.
 ```yml
 - uses: actions/checkout@v3
 - id: minecraft
-  uses: mcenv/setup-minecraft@v1
+  uses: mcenv/setup-minecraft@v2
   with:
     version: "1.18.2"
 - uses: actions/setup-java@v3
