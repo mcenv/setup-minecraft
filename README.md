@@ -28,5 +28,6 @@ Minecraft version used.
     java-version: "17"
 - run: |
     echo Running Minecraft ${{ steps.minecraft.outputs.version }}.
+    echo "eula=true" > eula.txt
     minecraft --nogui -Xmx2G
 ```
