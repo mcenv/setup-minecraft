@@ -5,9 +5,8 @@ on:
     branches:
       - "main"
     paths:
-      - "src/**"
+      - "main.js"
       - "package.json"
-      - "tsconfig.json"
   workflow_dispatch:
 
 jobs:
@@ -19,7 +18,7 @@ jobs:
         with:
           node-version: "16"
       - run: npm install
-      - run: npm run all
+      - run: npm run package
       - run: |
           git config --global user.name "mcenv"
           git config --global user.email "mcenv@users.noreply.github.com"

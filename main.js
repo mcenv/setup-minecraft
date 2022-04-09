@@ -1,3 +1,5 @@
+// @ts-check
+
 import * as cache from "@actions/cache";
 import * as core from "@actions/core";
 import { HttpClient } from "@actions/http-client";
@@ -5,20 +7,67 @@ import * as io from "@actions/io";
 import * as tc from "@actions/tool-cache";
 import * as crypto from "crypto";
 import { promises as fs } from "fs";
-import { INPUT_VERSION, MINECRAFT, OUTPUT_VERSION, SERVER_JAR, VERSION_MANIFEST_V2_URL } from "./constants";
-import type { Version, VersionManifestV2 } from "./types";
+import * as path from "path";
 
-async function getJson<T>(http: HttpClient, url: string): Promise<T> {
+/**
+ * @typedef {{
+ *     latest: {
+ *         release: string,
+ *         snapshot: string
+ *     },
+ *     versions: [
+ *         {
+ *             id: string,
+ *             type: "release" | "snapshot",
+ *             url: string,
+ *             time: string,
+ *             releaseTime: string,
+ *             sha1: string,
+ *             complianceLevel: number
+ *         }
+ *     ]
+ * }} VersionManifestV2
+ *
+ * @typedef {{
+ *     downloads: {
+ *         server: {
+ *             sha1: string,
+ *             size: number,
+ *             url: string
+ *         }
+ *     }
+ * }} Version
+ */
+
+const VERSION_MANIFEST_V2_URL = "https://launchermeta.mojang.com/mc/game/version_manifest_v2.json";
+const MINECRAFT = "minecraft";
+const SERVER_JAR = path.join(MINECRAFT, "server.jar");
+const INPUT_VERSION = "version";
+const OUTPUT_VERSION = "version";
+
+/**
+ * @template T
+ * @param {HttpClient} http
+ * @param {string} url
+ * @returns {Promise<T>}
+ */
+async function getJson(http, url) {
     const response = await http.get(url);
     const body = await response.readBody();
     return JSON.parse(body);
 }
 
-async function download(http: HttpClient, url: string): Promise<void[]> {
-    const version = await getJson<Version>(http, url);
+/**
+ * @param {HttpClient} http
+ * @param {string} url
+ */
+async function download(http, url) {
+    /** @type {Version} */
+    const version = await getJson(http, url);
+
     await tc.downloadTool(version.downloads.server.url, SERVER_JAR);
 
-    const checkSize = new Promise<void>(async (resolve, reject) => {
+    const checkSize = new Promise(async (resolve, reject) => {
         const expectedSize = version.downloads.server.size;
         const actualSize = (await fs.stat(SERVER_JAR)).size;
         if (expectedSize === actualSize) {
@@ -28,7 +77,7 @@ async function download(http: HttpClient, url: string): Promise<void[]> {
         }
     });
 
-    const checkSha1 = new Promise<void>(async (resolve, reject) => {
+    const checkSha1 = new Promise(async (resolve, reject) => {
         const expectedSha1 = version.downloads.server.sha1;
         const sha1 = crypto.createHash("sha1");
         sha1.update(await fs.readFile(SERVER_JAR));
@@ -43,11 +92,12 @@ async function download(http: HttpClient, url: string): Promise<void[]> {
     return Promise.all([checkSize, checkSha1]);
 }
 
-async function run(): Promise<void> {
+async function run() {
     try {
         const http = new HttpClient();
 
-        const versionManifest = await getJson<VersionManifestV2>(http, VERSION_MANIFEST_V2_URL);
+        /** @type {VersionManifestV2} */
+        const versionManifest = await getJson(http, VERSION_MANIFEST_V2_URL);
 
         const version = (() => {
             const version = core.getInput(INPUT_VERSION);

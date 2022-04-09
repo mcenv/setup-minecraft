@@ -58718,125 +58718,6 @@ module.exports.implForWrapper = function (wrapper) {
 
 /***/ }),
 
-/***/ 7413:
-/***/ ((__unused_webpack_module, exports, __nccwpck_require__) => {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.OUTPUT_VERSION = exports.INPUT_VERSION = exports.SERVER_JAR = exports.MINECRAFT = exports.VERSION_MANIFEST_V2_URL = void 0;
-const path = __nccwpck_require__(1017);
-exports.VERSION_MANIFEST_V2_URL = "https://launchermeta.mojang.com/mc/game/version_manifest_v2.json";
-exports.MINECRAFT = "minecraft";
-exports.SERVER_JAR = path.join(exports.MINECRAFT, "server.jar");
-exports.INPUT_VERSION = "version";
-exports.OUTPUT_VERSION = "version";
-//# sourceMappingURL=constants.js.map
-
-/***/ }),
-
-/***/ 6971:
-/***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
-
-"use strict";
-
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-const cache = __nccwpck_require__(7799);
-const core = __nccwpck_require__(2186);
-const http_client_1 = __nccwpck_require__(9925);
-const io = __nccwpck_require__(7436);
-const tc = __nccwpck_require__(7784);
-const crypto = __nccwpck_require__(6113);
-const fs_1 = __nccwpck_require__(7147);
-const constants_1 = __nccwpck_require__(7413);
-function getJson(http, url) {
-    return __awaiter(this, void 0, void 0, function* () {
-        const response = yield http.get(url);
-        const body = yield response.readBody();
-        return JSON.parse(body);
-    });
-}
-function download(http, url) {
-    return __awaiter(this, void 0, void 0, function* () {
-        const version = yield getJson(http, url);
-        yield tc.downloadTool(version.downloads.server.url, constants_1.SERVER_JAR);
-        const checkSize = new Promise((resolve, reject) => __awaiter(this, void 0, void 0, function* () {
-            const expectedSize = version.downloads.server.size;
-            const actualSize = (yield fs_1.promises.stat(constants_1.SERVER_JAR)).size;
-            if (expectedSize === actualSize) {
-                resolve();
-            }
-            else {
-                reject(`expected size: ${expectedSize}\nactual size: ${actualSize}`);
-            }
-        }));
-        const checkSha1 = new Promise((resolve, reject) => __awaiter(this, void 0, void 0, function* () {
-            const expectedSha1 = version.downloads.server.sha1;
-            const sha1 = crypto.createHash("sha1");
-            sha1.update(yield fs_1.promises.readFile(constants_1.SERVER_JAR));
-            const actualSha1 = sha1.digest("hex");
-            if (expectedSha1 === actualSha1) {
-                resolve();
-            }
-            else {
-                reject(`expected sha1: ${expectedSha1}\nactual sha1: ${actualSha1}`);
-            }
-        }));
-        return Promise.all([checkSize, checkSha1]);
-    });
-}
-function run() {
-    return __awaiter(this, void 0, void 0, function* () {
-        try {
-            const http = new http_client_1.HttpClient();
-            const versionManifest = yield getJson(http, constants_1.VERSION_MANIFEST_V2_URL);
-            const version = (() => {
-                const version = core.getInput(constants_1.INPUT_VERSION);
-                switch (version) {
-                    case "release":
-                        return versionManifest.latest.release;
-                    case "snapshot":
-                        return versionManifest.latest.snapshot;
-                    default:
-                        return version;
-                }
-            })();
-            const versionEntry = versionManifest.versions.find(v => v.id === version);
-            if (!versionEntry) {
-                throw new Error(`Version '${version}' not found`);
-            }
-            yield io.mkdirP(constants_1.MINECRAFT);
-            const key = `${constants_1.MINECRAFT}-${version}`;
-            const paths = [constants_1.MINECRAFT];
-            const cacheKey = yield cache.restoreCache(paths, key);
-            if (!cacheKey) {
-                yield download(http, versionEntry.url);
-                yield cache.saveCache(paths, key);
-            }
-            core.setOutput(constants_1.OUTPUT_VERSION, version);
-            core.info("Minecraft:");
-            core.info(`  Version: ${version}`);
-            core.info(`  Path: ${constants_1.SERVER_JAR}`);
-        }
-        catch (error) {
-            core.setFailed(`${error}`);
-        }
-    });
-}
-run();
-//# sourceMappingURL=main.js.map
-
-/***/ }),
-
 /***/ 2877:
 /***/ ((module) => {
 
@@ -59054,18 +58935,214 @@ module.exports = JSON.parse('[[[0,44],"disallowed_STD3_valid"],[[45,46],"valid"]
 /******/ 	}
 /******/ 	
 /************************************************************************/
+/******/ 	/* webpack/runtime/compat get default export */
+/******/ 	(() => {
+/******/ 		// getDefaultExport function for compatibility with non-harmony modules
+/******/ 		__nccwpck_require__.n = (module) => {
+/******/ 			var getter = module && module.__esModule ?
+/******/ 				() => (module['default']) :
+/******/ 				() => (module);
+/******/ 			__nccwpck_require__.d(getter, { a: getter });
+/******/ 			return getter;
+/******/ 		};
+/******/ 	})();
+/******/ 	
+/******/ 	/* webpack/runtime/define property getters */
+/******/ 	(() => {
+/******/ 		// define getter functions for harmony exports
+/******/ 		__nccwpck_require__.d = (exports, definition) => {
+/******/ 			for(var key in definition) {
+/******/ 				if(__nccwpck_require__.o(definition, key) && !__nccwpck_require__.o(exports, key)) {
+/******/ 					Object.defineProperty(exports, key, { enumerable: true, get: definition[key] });
+/******/ 				}
+/******/ 			}
+/******/ 		};
+/******/ 	})();
+/******/ 	
+/******/ 	/* webpack/runtime/hasOwnProperty shorthand */
+/******/ 	(() => {
+/******/ 		__nccwpck_require__.o = (obj, prop) => (Object.prototype.hasOwnProperty.call(obj, prop))
+/******/ 	})();
+/******/ 	
+/******/ 	/* webpack/runtime/make namespace object */
+/******/ 	(() => {
+/******/ 		// define __esModule on exports
+/******/ 		__nccwpck_require__.r = (exports) => {
+/******/ 			if(typeof Symbol !== 'undefined' && Symbol.toStringTag) {
+/******/ 				Object.defineProperty(exports, Symbol.toStringTag, { value: 'Module' });
+/******/ 			}
+/******/ 			Object.defineProperty(exports, '__esModule', { value: true });
+/******/ 		};
+/******/ 	})();
+/******/ 	
 /******/ 	/* webpack/runtime/compat */
 /******/ 	
 /******/ 	if (typeof __nccwpck_require__ !== 'undefined') __nccwpck_require__.ab = __dirname + "/";
 /******/ 	
 /************************************************************************/
-/******/ 	
-/******/ 	// startup
-/******/ 	// Load entry module and return exports
-/******/ 	// This entry module is referenced by other modules so it can't be inlined
-/******/ 	var __webpack_exports__ = __nccwpck_require__(6971);
-/******/ 	module.exports = __webpack_exports__;
-/******/ 	
+var __webpack_exports__ = {};
+// This entry need to be wrapped in an IIFE because it need to be in strict mode.
+(() => {
+"use strict";
+__nccwpck_require__.r(__webpack_exports__);
+/* harmony import */ var _actions_cache__WEBPACK_IMPORTED_MODULE_0__ = __nccwpck_require__(7799);
+/* harmony import */ var _actions_cache__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__nccwpck_require__.n(_actions_cache__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _actions_core__WEBPACK_IMPORTED_MODULE_1__ = __nccwpck_require__(2186);
+/* harmony import */ var _actions_core__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__nccwpck_require__.n(_actions_core__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _actions_http_client__WEBPACK_IMPORTED_MODULE_2__ = __nccwpck_require__(9925);
+/* harmony import */ var _actions_io__WEBPACK_IMPORTED_MODULE_3__ = __nccwpck_require__(7436);
+/* harmony import */ var _actions_io__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__nccwpck_require__.n(_actions_io__WEBPACK_IMPORTED_MODULE_3__);
+/* harmony import */ var _actions_tool_cache__WEBPACK_IMPORTED_MODULE_4__ = __nccwpck_require__(7784);
+/* harmony import */ var _actions_tool_cache__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__nccwpck_require__.n(_actions_tool_cache__WEBPACK_IMPORTED_MODULE_4__);
+/* harmony import */ var crypto__WEBPACK_IMPORTED_MODULE_5__ = __nccwpck_require__(6113);
+/* harmony import */ var crypto__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__nccwpck_require__.n(crypto__WEBPACK_IMPORTED_MODULE_5__);
+/* harmony import */ var fs__WEBPACK_IMPORTED_MODULE_6__ = __nccwpck_require__(7147);
+/* harmony import */ var fs__WEBPACK_IMPORTED_MODULE_6___default = /*#__PURE__*/__nccwpck_require__.n(fs__WEBPACK_IMPORTED_MODULE_6__);
+/* harmony import */ var path__WEBPACK_IMPORTED_MODULE_7__ = __nccwpck_require__(1017);
+/* harmony import */ var path__WEBPACK_IMPORTED_MODULE_7___default = /*#__PURE__*/__nccwpck_require__.n(path__WEBPACK_IMPORTED_MODULE_7__);
+// @ts-check
+
+
+
+
+
+
+
+
+
+
+/**
+ * @typedef {{
+ *     latest: {
+ *         release: string,
+ *         snapshot: string
+ *     },
+ *     versions: [
+ *         {
+ *             id: string,
+ *             type: "release" | "snapshot",
+ *             url: string,
+ *             time: string,
+ *             releaseTime: string,
+ *             sha1: string,
+ *             complianceLevel: number
+ *         }
+ *     ]
+ * }} VersionManifestV2
+ *
+ * @typedef {{
+ *     downloads: {
+ *         server: {
+ *             sha1: string,
+ *             size: number,
+ *             url: string
+ *         }
+ *     }
+ * }} Version
+ */
+
+const VERSION_MANIFEST_V2_URL = "https://launchermeta.mojang.com/mc/game/version_manifest_v2.json";
+const MINECRAFT = "minecraft";
+const SERVER_JAR = path__WEBPACK_IMPORTED_MODULE_7__.join(MINECRAFT, "server.jar");
+const INPUT_VERSION = "version";
+const OUTPUT_VERSION = "version";
+
+/**
+ * @template T
+ * @param {HttpClient} http
+ * @param {string} url
+ * @returns {Promise<T>}
+ */
+async function getJson(http, url) {
+    const response = await http.get(url);
+    const body = await response.readBody();
+    return JSON.parse(body);
+}
+
+/**
+ * @param {HttpClient} http
+ * @param {string} url
+ */
+async function download(http, url) {
+    /** @type {Version} */
+    const version = await getJson(http, url);
+
+    await _actions_tool_cache__WEBPACK_IMPORTED_MODULE_4__.downloadTool(version.downloads.server.url, SERVER_JAR);
+
+    const checkSize = new Promise(async (resolve, reject) => {
+        const expectedSize = version.downloads.server.size;
+        const actualSize = (await fs__WEBPACK_IMPORTED_MODULE_6__.promises.stat(SERVER_JAR)).size;
+        if (expectedSize === actualSize) {
+            resolve();
+        } else {
+            reject(`expected size: ${expectedSize}\nactual size: ${actualSize}`);
+        }
+    });
+
+    const checkSha1 = new Promise(async (resolve, reject) => {
+        const expectedSha1 = version.downloads.server.sha1;
+        const sha1 = crypto__WEBPACK_IMPORTED_MODULE_5__.createHash("sha1");
+        sha1.update(await fs__WEBPACK_IMPORTED_MODULE_6__.promises.readFile(SERVER_JAR));
+        const actualSha1 = sha1.digest("hex");
+        if (expectedSha1 === actualSha1) {
+            resolve();
+        } else {
+            reject(`expected sha1: ${expectedSha1}\nactual sha1: ${actualSha1}`);
+        }
+    });
+
+    return Promise.all([checkSize, checkSha1]);
+}
+
+async function run() {
+    try {
+        const http = new _actions_http_client__WEBPACK_IMPORTED_MODULE_2__.HttpClient();
+
+        /** @type {VersionManifestV2} */
+        const versionManifest = await getJson(http, VERSION_MANIFEST_V2_URL);
+
+        const version = (() => {
+            const version = _actions_core__WEBPACK_IMPORTED_MODULE_1__.getInput(INPUT_VERSION);
+            switch (version) {
+                case "release":
+                    return versionManifest.latest.release;
+                case "snapshot":
+                    return versionManifest.latest.snapshot;
+                default:
+                    return version;
+            }
+        })();
+
+        const versionEntry = versionManifest.versions.find(v => v.id === version);
+        if (!versionEntry) {
+            throw new Error(`Version '${version}' not found`);
+        }
+
+        await _actions_io__WEBPACK_IMPORTED_MODULE_3__.mkdirP(MINECRAFT);
+
+        const key = `${MINECRAFT}-${version}`;
+        const paths = [MINECRAFT];
+        const cacheKey = await _actions_cache__WEBPACK_IMPORTED_MODULE_0__.restoreCache(paths, key);
+        if (!cacheKey) {
+            await download(http, versionEntry.url);
+            await _actions_cache__WEBPACK_IMPORTED_MODULE_0__.saveCache(paths, key);
+        }
+
+        _actions_core__WEBPACK_IMPORTED_MODULE_1__.setOutput(OUTPUT_VERSION, version);
+
+        _actions_core__WEBPACK_IMPORTED_MODULE_1__.info("Minecraft:");
+        _actions_core__WEBPACK_IMPORTED_MODULE_1__.info(`  Version: ${version}`);
+        _actions_core__WEBPACK_IMPORTED_MODULE_1__.info(`  Path: ${SERVER_JAR}`)
+    } catch (error) {
+        _actions_core__WEBPACK_IMPORTED_MODULE_1__.setFailed(`${error}`);
+    }
+}
+
+run();
+
+})();
+
+module.exports = __webpack_exports__;
 /******/ })()
 ;
 //# sourceMappingURL=index.js.map
