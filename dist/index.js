@@ -60771,7 +60771,7 @@ const path = __nccwpck_require__(1017);
  * }} Version
  */
 
-const VERSION_MANIFEST_V2_URL = "https://launchermeta.mojang.com/mc/game/version_manifest_v2.json";
+const VERSION_MANIFEST_URL = "https://piston-meta.mojang.com/mc/game/version_manifest_v2.json";
 const ROOT_PATH = "minecraft";
 const SERVER_JAR_PATH = path.join(ROOT_PATH, "server.jar");
 const BIN_PATH = path.join(ROOT_PATH, "bin")
@@ -60843,7 +60843,7 @@ async function run() {
         const http = new HttpClient();
 
         /** @type {VersionManifestV2} */
-        const versionManifest = await getJson(http, VERSION_MANIFEST_V2_URL);
+        const versionManifest = await getJson(http, VERSION_MANIFEST_URL);
 
         const version = (() => {
             const version = core.getInput(INPUT_VERSION);
