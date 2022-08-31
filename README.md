@@ -21,7 +21,7 @@ Minecraft version used.
 - id: minecraft
   uses: mcenv/setup-minecraft@v2
   with:
-    version: "1.18.2"
+    version: "1.19.2"
 - uses: actions/setup-java@v3
   with:
     distribution: "temurin"
