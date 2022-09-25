@@ -61486,18 +61486,6 @@ const path = __nccwpck_require__(1017);
 const VERSION_MANIFEST_URL = "https://piston-meta.mojang.com/mc/game/version_manifest_v2.json";
 const ROOT_PATH = "minecraft";
 const SERVER_JAR_PATH = path.join(ROOT_PATH, "server.jar");
-const BIN_PATH = path.join(ROOT_PATH, "bin")
-
-const SCRIPT_PATH = path.join(BIN_PATH, "minecraft");
-const SCRIPT = `
-java $2 -jar ${SERVER_JAR_PATH} $1
-`;
-
-const SCRIPT_BAT_PATH = path.join(BIN_PATH, "minecraft.bat");
-const SCRIPT_BAT = `
-@echo off
-java %~2 -jar ${SERVER_JAR_PATH} %~1
-`;
 
 const INPUT_VERSION = "version";
 
@@ -61529,7 +61517,7 @@ async function download(http, url) {
         const expectedSize = version.downloads.server.size;
         const actualSize = (await fs.stat(SERVER_JAR_PATH)).size;
         if (expectedSize === actualSize) {
-            resolve();
+            resolve(undefined);
         } else {
             reject(`expected size: ${expectedSize}\nactual size: ${actualSize}`);
         }
@@ -61541,7 +61529,7 @@ async function download(http, url) {
         sha1.update(await fs.readFile(SERVER_JAR_PATH));
         const actualSha1 = sha1.digest("hex");
         if (expectedSha1 === actualSha1) {
-            resolve();
+            resolve(undefined);
         } else {
             reject(`expected sha1: ${expectedSha1}\nactual sha1: ${actualSha1}`);
         }
@@ -61557,17 +61545,16 @@ async function run() {
         /** @type {VersionManifestV2} */
         const versionManifest = await getJson(http, VERSION_MANIFEST_URL);
 
-        const version = (() => {
-            const version = core.getInput(INPUT_VERSION);
-            switch (version) {
-                case "release":
-                    return versionManifest.latest.release;
-                case "snapshot":
-                    return versionManifest.latest.snapshot;
-                default:
-                    return version;
-            }
-        })();
+        let version = core.getInput(INPUT_VERSION);
+        switch (version) {
+            case "release":
+                version = versionManifest.latest.release;
+                break;
+            case "snapshot":
+                version = versionManifest.latest.snapshot;
+                break;
+            default:
+        }
 
         const versionEntry = versionManifest.versions.find(v => v.id === version);
         if (!versionEntry) {
@@ -61576,26 +61563,13 @@ async function run() {
 
         await io.mkdirP(ROOT_PATH);
 
-        const installScripts = new Promise(async resolve => {
-            await io.mkdirP(BIN_PATH);
-            core.addPath(BIN_PATH);
-            await fs.writeFile(SCRIPT_PATH, SCRIPT, { mode: 0o775 });
-            await fs.writeFile(SCRIPT_BAT_PATH, SCRIPT_BAT);
-            resolve();
-        });
-
-        const checkCache = new Promise(async resolve => {
-            const key = `${ROOT_PATH}-${version}`;
-            const paths = [ROOT_PATH];
-            const cacheKey = await cache.restoreCache(paths, key);
-            if (!cacheKey) {
-                await download(http, versionEntry.url);
-                await cache.saveCache(paths, key);
-            }
-            resolve();
-        });
-
-        await Promise.all([installScripts, checkCache]);
+        const key = `${ROOT_PATH}-${version}`;
+        const paths = [ROOT_PATH];
+        const cacheKey = await cache.restoreCache(paths, key);
+        if (!cacheKey) {
+            await download(http, versionEntry.url);
+            await cache.saveCache(paths, key);
+        }
 
         core.setOutput(OUTPUT_VERSION, version);
 
