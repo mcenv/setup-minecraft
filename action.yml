@@ -1,0 +1,17 @@
+name: 'Setup Minecraft'
+author: 'mce'
+description: 'Setup a Minecraft server'
+inputs:
+  version:
+    description: 'Minecraft version to use'
+    required: false
+    default: 'release'
+outputs:
+  version:
+    description: 'Minecraft version used'
+runs:
+  using: 'node16'
+  main: 'index.js'
+branding:
+  icon: 'box'
+  color: 'gray-dark'
