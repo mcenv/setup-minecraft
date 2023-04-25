@@ -75,7 +75,7 @@ async function download(http, url) {
         if (expectedSize === actualSize) {
             resolve(undefined);
         } else {
-            reject(`expected size: ${expectedSize}\nactual size: ${actualSize}`);
+            reject(`Expected size: ${expectedSize}\nActual size: ${actualSize}`);
         }
     });
 
@@ -87,7 +87,7 @@ async function download(http, url) {
         if (expectedSha1 === actualSha1) {
             resolve(undefined);
         } else {
-            reject(`expected sha1: ${expectedSha1}\nactual sha1: ${actualSha1}`);
+            reject(`Expected sha1: ${expectedSha1}\nActual sha1: ${actualSha1}`);
         }
     });
 
@@ -114,7 +114,7 @@ async function run() {
 
         const versionEntry = versionManifest.versions.find(v => v.id === version);
         if (!versionEntry) {
-            throw new Error(`Version '${version}' not found`);
+            throw new Error(`No version '${version}' was found`);
         }
 
         await io.mkdirP(ROOT_PATH);
@@ -129,8 +129,7 @@ async function run() {
 
         core.setOutput(OUTPUT_VERSION, version);
 
-        core.info("Minecraft:");
-        core.info(`  Version: ${version}`);
+        core.info(`Minecraft: ${version}`);
     } catch (error) {
         core.setFailed(`${error}`);
     }
