@@ -60258,7 +60258,7 @@ const path = __nccwpck_require__(1017);
  */
 
 const VERSION_MANIFEST_URL = "https://piston-meta.mojang.com/mc/game/version_manifest_v2.json";
-const CACHE_KEY_PREFIX = "setup-minecraft";
+const CACHE_KEY_PREFIX = "minecraft";
 const ROOT_PATH = path.join(os.homedir(), ".minecraft");
 const SERVER_JAR_PATH = path.join(ROOT_PATH, "server.jar");
 const SERVER_JAR_ENV = "MINECRAFT";

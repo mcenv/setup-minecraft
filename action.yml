@@ -1,5 +1,5 @@
 name: 'Setup Minecraft'
-author: 'mce'
+author: 'intsuc'
 description: 'Setup a Minecraft server'
 inputs:
   version:
