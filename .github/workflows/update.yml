@@ -21,11 +21,11 @@ jobs:
         with:
           node-version: "16"
       - run: |
-          npm install
-          npm run package
           git config --global user.name "mcenv"
           git config --global user.email "mcenv@users.noreply.github.com"
           git worktree add dist dist
+          npm install
+          npm run package
           cd dist
           mv ../action.yml .
           mv ../LICENSE .
