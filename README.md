@@ -19,7 +19,7 @@ Minecraft version used.
 ```yml
 - uses: actions/checkout@v3
 - id: minecraft
-  uses: mcenv/setup-minecraft@v2
+  uses: mcenv/setup-minecraft@v3
   with:
     version: "1.19.4"
 - uses: actions/setup-java@v3
@@ -29,7 +29,7 @@ Minecraft version used.
 - run: |
     echo Running Minecraft ${{ steps.minecraft.outputs.version }}.
     echo "eula=true" > eula.txt
-    java -jar minecraft/server.jar nogui
+    java -jar $MINECRAFT nogui
 ```
 
 [^1]: NOT OFFICIAL MINECRAFT PRODUCT. NOT APPROVED BY OR ASSOCIATED WITH MOJANG.
