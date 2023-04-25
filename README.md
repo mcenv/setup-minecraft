@@ -1,6 +1,6 @@
-# setup-minecraft
+# <samp>setup-minecraft</samp>
 
-This action downloads and caches a specific version of Minecraft.
+This action downloads and caches a specific version of Minecraft: Java Edition[^1].
 
 ## Inputs
 
@@ -31,3 +31,5 @@ Minecraft version used.
     echo "eula=true" > eula.txt
     java -jar minecraft/server.jar nogui
 ```
+
+[^1]: NOT OFFICIAL MINECRAFT PRODUCT. NOT APPROVED BY OR ASSOCIATED WITH MOJANG.
