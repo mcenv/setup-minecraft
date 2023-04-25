@@ -26,7 +26,7 @@ jobs:
           git config --global user.name "mcenv"
           git config --global user.email "mcenv@users.noreply.github.com"
           git stash save --include-untracked
-          git checkout dist
+          git switch dist
           git stash apply
           git add .
           git commit --message "Update"
