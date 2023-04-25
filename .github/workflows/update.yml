@@ -28,6 +28,7 @@ jobs:
           git worktree add temp
           cd temp
           rm -rf *
+          mkdir dist
           mv ../dist/* dist
           mv ../action.yml .
           mv ../LICENSE .
