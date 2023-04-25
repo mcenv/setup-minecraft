@@ -23,5 +23,7 @@ jobs:
       - run: |
           git config --global user.name "mcenv"
           git config --global user.email "mcenv@users.noreply.github.com"
-          git commit -am "Update dist"
+          git switch dist
+          git restore --source=main action.yml LICENSE README.md dist/index.js dist/licenses.txt
+          git commit -am "Update"
           git push
