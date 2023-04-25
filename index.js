@@ -7,6 +7,7 @@ const io = require("@actions/io");
 const tc = require("@actions/tool-cache");
 const crypto = require("crypto");
 const fs = require("fs/promises");
+const os = require("os");
 const path = require("path");
 
 /**
@@ -40,11 +41,11 @@ const path = require("path");
  */
 
 const VERSION_MANIFEST_URL = "https://piston-meta.mojang.com/mc/game/version_manifest_v2.json";
-const ROOT_PATH = "minecraft";
+const CACHE_KEY_PREFIX = "setup-minecraft";
+const ROOT_PATH = path.join(os.homedir(), ".minecraft");
 const SERVER_JAR_PATH = path.join(ROOT_PATH, "server.jar");
-
+const SERVER_JAR_ENV = "MINECRAFT";
 const INPUT_VERSION = "version";
-
 const OUTPUT_VERSION = "version";
 
 /**
@@ -119,7 +120,7 @@ async function run() {
 
         await io.mkdirP(ROOT_PATH);
 
-        const key = `${ROOT_PATH}-${version}`;
+        const key = `${CACHE_KEY_PREFIX}-${version}`;
         const paths = [ROOT_PATH];
         const cacheKey = await cache.restoreCache(paths, key);
         if (!cacheKey) {
@@ -127,6 +128,7 @@ async function run() {
             await cache.saveCache(paths, key);
         }
 
+        core.exportVariable(SERVER_JAR_ENV, SERVER_JAR_PATH);
         core.setOutput(OUTPUT_VERSION, version);
 
         core.info(`Minecraft: ${version}`);
