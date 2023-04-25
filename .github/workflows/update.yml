@@ -20,14 +20,18 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: "16"
-      - run: npm install
-      - run: npm run package
       - run: |
+          npm install
+          npm run package
           git config --global user.name "mcenv"
           git config --global user.email "mcenv@users.noreply.github.com"
-          git stash save --include-untracked
-          git switch dist
-          git stash apply
+          git worktree add temp
+          cd temp
+          rm -rf *
+          mv ../dist/* dist
+          mv ../action.yml .
+          mv ../LICENSE .
+          mv ../README.md .
           git add .
           git commit --message "Update"
-          git push
+          git push origin dist
