@@ -60339,7 +60339,7 @@ async function run() {
 
         const key = `${CACHE_KEY_PREFIX}-${version}`;
         const paths = [ROOT_PATH];
-        const cacheKey = await cache.restoreCache(paths, key);
+        const cacheKey = await cache.restoreCache(paths, key, undefined, undefined, true);
         if (!cacheKey) {
             await download(http, versionEntry.url);
             await cache.saveCache(paths, key);
