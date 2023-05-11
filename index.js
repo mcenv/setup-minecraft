@@ -121,11 +121,10 @@ async function run() {
         await io.mkdirP(ROOT_PATH);
 
         const key = `${CACHE_KEY_PREFIX}-${version}`;
-        const paths = [ROOT_PATH];
-        const cacheKey = await cache.restoreCache(paths, key, [key], undefined, true);
+        const cacheKey = await cache.restoreCache([ROOT_PATH], key, undefined, undefined, true);
         if (cacheKey === undefined) {
             await download(http, versionEntry.url);
-            await cache.saveCache(paths, key);
+            await cache.saveCache([ROOT_PATH], key);
         }
 
         core.exportVariable(SERVER_JAR_ENV, SERVER_JAR_PATH);
