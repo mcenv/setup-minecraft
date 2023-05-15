@@ -7,7 +7,6 @@ const io = require("@actions/io");
 const tc = require("@actions/tool-cache");
 const crypto = require("crypto");
 const fs = require("fs/promises");
-const os = require("os");
 const path = require("path");
 
 /**
