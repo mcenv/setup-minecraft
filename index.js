@@ -55,9 +55,9 @@ const OUTPUT_VERSION = "version";
  * @returns {Promise<T>}
  */
 async function getJson(http, url) {
-    const response = await http.get(url);
-    const body = await response.readBody();
-    return JSON.parse(body);
+  const response = await http.get(url);
+  const body = await response.readBody();
+  return JSON.parse(body);
 }
 
 /**
@@ -65,75 +65,75 @@ async function getJson(http, url) {
  * @param {string} url
  */
 async function download(http, url) {
-    /** @type {Version} */
-    const version = await getJson(http, url);
+  /** @type {Version} */
+  const version = await getJson(http, url);
 
-    await tc.downloadTool(version.downloads.server.url, SERVER_JAR_PATH);
+  await tc.downloadTool(version.downloads.server.url, SERVER_JAR_PATH);
 
-    const checkSize = new Promise(async (resolve, reject) => {
-        const expectedSize = version.downloads.server.size;
-        const actualSize = (await fs.stat(SERVER_JAR_PATH)).size;
-        if (expectedSize === actualSize) {
-            resolve(undefined);
-        } else {
-            reject(`Expected size: ${expectedSize}\nActual size: ${actualSize}`);
-        }
-    });
+  const checkSize = new Promise(async (resolve, reject) => {
+    const expectedSize = version.downloads.server.size;
+    const actualSize = (await fs.stat(SERVER_JAR_PATH)).size;
+    if (expectedSize === actualSize) {
+      resolve(undefined);
+    } else {
+      reject(`Expected size: ${expectedSize}\nActual size: ${actualSize}`);
+    }
+  });
 
-    const checkSha1 = new Promise(async (resolve, reject) => {
-        const expectedSha1 = version.downloads.server.sha1;
-        const sha1 = crypto.createHash("sha1");
-        sha1.update(await fs.readFile(SERVER_JAR_PATH));
-        const actualSha1 = sha1.digest("hex");
-        if (expectedSha1 === actualSha1) {
-            resolve(undefined);
-        } else {
-            reject(`Expected sha1: ${expectedSha1}\nActual sha1: ${actualSha1}`);
-        }
-    });
+  const checkSha1 = new Promise(async (resolve, reject) => {
+    const expectedSha1 = version.downloads.server.sha1;
+    const sha1 = crypto.createHash("sha1");
+    sha1.update(await fs.readFile(SERVER_JAR_PATH));
+    const actualSha1 = sha1.digest("hex");
+    if (expectedSha1 === actualSha1) {
+      resolve(undefined);
+    } else {
+      reject(`Expected sha1: ${expectedSha1}\nActual sha1: ${actualSha1}`);
+    }
+  });
 
-    return Promise.all([checkSize, checkSha1]);
+  return Promise.all([checkSize, checkSha1]);
 }
 
 async function run() {
-    try {
-        const http = new HttpClient();
+  try {
+    const http = new HttpClient();
 
-        /** @type {VersionManifestV2} */
-        const versionManifest = await getJson(http, VERSION_MANIFEST_URL);
+    /** @type {VersionManifestV2} */
+    const versionManifest = await getJson(http, VERSION_MANIFEST_URL);
 
-        let version = core.getInput(INPUT_VERSION);
-        switch (version) {
-            case "release":
-                version = versionManifest.latest.release;
-                break;
-            case "snapshot":
-                version = versionManifest.latest.snapshot;
-                break;
-            default:
-        }
-
-        const versionEntry = versionManifest.versions.find(v => v.id === version);
-        if (!versionEntry) {
-            throw new Error(`No version '${version}' was found`);
-        }
-
-        await io.mkdirP(ROOT_PATH);
-
-        const key = `${CACHE_KEY_PREFIX}-${version}`;
-        const cacheKey = await cache.restoreCache([ROOT_PATH], key, undefined, undefined, true);
-        if (cacheKey === undefined) {
-            await download(http, versionEntry.url);
-            await cache.saveCache([ROOT_PATH], key);
-        }
-
-        core.exportVariable(SERVER_JAR_ENV, SERVER_JAR_PATH);
-        core.setOutput(OUTPUT_VERSION, version);
-
-        core.info(`Minecraft: ${version}`);
-    } catch (error) {
-        core.setFailed(`${error}`);
+    let version = core.getInput(INPUT_VERSION);
+    switch (version) {
+      case "release":
+        version = versionManifest.latest.release;
+        break;
+      case "snapshot":
+        version = versionManifest.latest.snapshot;
+        break;
+      default:
     }
+
+    const versionEntry = versionManifest.versions.find(v => v.id === version);
+    if (!versionEntry) {
+      throw new Error(`No version '${version}' was found`);
+    }
+
+    await io.mkdirP(ROOT_PATH);
+
+    const key = `${CACHE_KEY_PREFIX}-${version}`;
+    const cacheKey = await cache.restoreCache([ROOT_PATH], key, undefined, undefined, true);
+    if (cacheKey === undefined) {
+      await download(http, versionEntry.url);
+      await cache.saveCache([ROOT_PATH], key);
+    }
+
+    core.exportVariable(SERVER_JAR_ENV, SERVER_JAR_PATH);
+    core.setOutput(OUTPUT_VERSION, version);
+
+    core.info(`Minecraft: ${version}`);
+  } catch (error) {
+    core.setFailed(`${error}`);
+  }
 }
 
 run();
