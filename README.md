@@ -14,6 +14,10 @@ Minecraft version to use. Default `release`.
 
 Minecraft version used.
 
+### `package`
+
+Package used.
+
 ## Example usage
 
 ```yml
@@ -25,7 +29,7 @@ Minecraft version used.
 - uses: actions/setup-java@v3
   with:
     distribution: "temurin"
-    java-version: "17"
+    java-version: ${{ fromJson(steps.minecraft.outputs.package).javaVersion.majorVersion }}
 - run: |
     echo Running Minecraft ${{ steps.minecraft.outputs.version }}.
     echo "eula=true" > eula.txt
