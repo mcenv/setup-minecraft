@@ -9,6 +9,8 @@ inputs:
 outputs:
   version:
     description: 'Minecraft version used'
+  package:
+    description: 'Package used'
 runs:
   using: 'node16'
   main: 'index.js'
