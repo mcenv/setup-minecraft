@@ -1,19 +1,19 @@
-name: 'Setup Minecraft'
-author: 'mcenv'
-description: 'Setup a Minecraft server'
+name: "Setup Minecraft"
+author: "mcenv"
+description: "Setup a Minecraft server"
 inputs:
   version:
-    description: 'Minecraft version to use'
+    description: "Minecraft version to use"
     required: false
-    default: 'release'
+    default: "release"
 outputs:
   version:
-    description: 'Minecraft version used'
+    description: "Minecraft version used"
   package:
-    description: 'Package used'
+    description: "Package used"
 runs:
-  using: 'node16'
-  main: 'index.js'
+  using: "node16"
+  main: "index.js"
 branding:
-  icon: 'box'
-  color: 'gray-dark'
+  icon: "box"
+  color: "gray-dark"
