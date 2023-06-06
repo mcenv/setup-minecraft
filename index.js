@@ -59601,9 +59601,12 @@ module.exports = JSON.parse('[[[0,44],"disallowed_STD3_valid"],[[45,46],"valid"]
 /******/ 	
 /************************************************************************/
 var __webpack_exports__ = {};
-// This entry need to be wrapped in an IIFE because it need to be isolated against other modules in the chunk.
+// This entry need to be wrapped in an IIFE because it need to be in strict mode.
 (() => {
+"use strict";
 // @ts-check
+
+
 
 const cache = __nccwpck_require__(7799);
 const core = __nccwpck_require__(2186);
@@ -59641,7 +59644,7 @@ const path = __nccwpck_require__(1017);
  *             url: string
  *         }
  *     }
- * }} Package
+ * }} Pack
  */
 
 const VERSION_MANIFEST_URL = "https://piston-meta.mojang.com/mc/game/version_manifest_v2.json";
@@ -59666,13 +59669,13 @@ async function getJson(http, url) {
 }
 
 /**
- * @param {Package} package
+ * @param {Pack} pack
  */
-async function downloadServer(package) {
-  await tc.downloadTool(package.downloads.server.url, SERVER_JAR_PATH);
+async function downloadServer(pack) {
+  await tc.downloadTool(pack.downloads.server.url, SERVER_JAR_PATH);
 
   const checkSize = new Promise(async (resolve, reject) => {
-    const expectedSize = package.downloads.server.size;
+    const expectedSize = pack.downloads.server.size;
     const actualSize = (await fs.stat(SERVER_JAR_PATH)).size;
     if (expectedSize === actualSize) {
       resolve(undefined);
@@ -59682,7 +59685,7 @@ async function downloadServer(package) {
   });
 
   const checkSha1 = new Promise(async (resolve, reject) => {
-    const expectedSha1 = package.downloads.server.sha1;
+    const expectedSha1 = pack.downloads.server.sha1;
     const sha1 = crypto.createHash("sha1");
     sha1.update(await fs.readFile(SERVER_JAR_PATH));
     const actualSha1 = sha1.digest("hex");
@@ -59719,21 +59722,21 @@ async function run() {
       throw new Error(`No version '${version}' was found`);
     }
 
-    /** @type {Package} */
-    const package = await getJson(http, versionEntry.url);
+    /** @type {Pack} */
+    const pack = await getJson(http, versionEntry.url);
 
     await io.mkdirP(ROOT_PATH);
 
     const key = `${CACHE_KEY_PREFIX}-${version}`;
     const cacheKey = await cache.restoreCache([ROOT_PATH], key, undefined, undefined, true);
     if (cacheKey === undefined) {
-      await downloadServer(package);
+      await downloadServer(pack);
       await cache.saveCache([ROOT_PATH], key);
     }
 
     core.exportVariable(SERVER_JAR_ENV, SERVER_JAR_PATH);
     core.setOutput(OUTPUT_VERSION, version);
-    core.setOutput(OUTPUT_PACKAGE, package);
+    core.setOutput(OUTPUT_PACKAGE, pack);
 
     core.info(`Minecraft: ${version}`);
   } catch (error) {
