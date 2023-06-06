@@ -59434,14 +59434,6 @@ module.exports = require("fs");
 
 /***/ }),
 
-/***/ 3292:
-/***/ ((module) => {
-
-"use strict";
-module.exports = require("fs/promises");
-
-/***/ }),
-
 /***/ 3685:
 /***/ ((module) => {
 
@@ -59595,6 +59587,17 @@ module.exports = JSON.parse('[[[0,44],"disallowed_STD3_valid"],[[45,46],"valid"]
 /******/ 	}
 /******/ 	
 /************************************************************************/
+/******/ 	/* webpack/runtime/make namespace object */
+/******/ 	(() => {
+/******/ 		// define __esModule on exports
+/******/ 		__nccwpck_require__.r = (exports) => {
+/******/ 			if(typeof Symbol !== 'undefined' && Symbol.toStringTag) {
+/******/ 				Object.defineProperty(exports, Symbol.toStringTag, { value: 'Module' });
+/******/ 			}
+/******/ 			Object.defineProperty(exports, '__esModule', { value: true });
+/******/ 		};
+/******/ 	})();
+/******/ 	
 /******/ 	/* webpack/runtime/compat */
 /******/ 	
 /******/ 	if (typeof __nccwpck_require__ !== 'undefined') __nccwpck_require__.ab = __dirname + "/";
@@ -59604,18 +59607,38 @@ var __webpack_exports__ = {};
 // This entry need to be wrapped in an IIFE because it need to be in strict mode.
 (() => {
 "use strict";
+// ESM COMPAT FLAG
+__nccwpck_require__.r(__webpack_exports__);
+
+// EXTERNAL MODULE: ./node_modules/@actions/cache/lib/cache.js
+var cache = __nccwpck_require__(7799);
+// EXTERNAL MODULE: ./node_modules/@actions/core/lib/core.js
+var core = __nccwpck_require__(2186);
+// EXTERNAL MODULE: ./node_modules/@actions/http-client/lib/index.js
+var lib = __nccwpck_require__(6255);
+// EXTERNAL MODULE: ./node_modules/@actions/io/lib/io.js
+var io = __nccwpck_require__(7436);
+// EXTERNAL MODULE: ./node_modules/@actions/tool-cache/lib/tool-cache.js
+var tool_cache = __nccwpck_require__(7784);
+// EXTERNAL MODULE: external "crypto"
+var external_crypto_ = __nccwpck_require__(6113);
+;// CONCATENATED MODULE: external "fs/promises"
+const promises_namespaceObject = require("fs/promises");
+// EXTERNAL MODULE: external "path"
+var external_path_ = __nccwpck_require__(1017);
+;// CONCATENATED MODULE: ./index.js
 // @ts-check
 
 
 
-const cache = __nccwpck_require__(7799);
-const core = __nccwpck_require__(2186);
-const { HttpClient } = __nccwpck_require__(6255);
-const io = __nccwpck_require__(7436);
-const tc = __nccwpck_require__(7784);
-const crypto = __nccwpck_require__(6113);
-const fs = __nccwpck_require__(3292);
-const path = __nccwpck_require__(1017);
+
+
+
+
+
+
+
+
 
 /**
  * @typedef {{
@@ -59650,7 +59673,7 @@ const path = __nccwpck_require__(1017);
 const VERSION_MANIFEST_URL = "https://piston-meta.mojang.com/mc/game/version_manifest_v2.json";
 const CACHE_KEY_PREFIX = "minecraft";
 const ROOT_PATH = ".minecraft";
-const SERVER_JAR_PATH = path.join(ROOT_PATH, "server.jar");
+const SERVER_JAR_PATH = (0,external_path_.join)(ROOT_PATH, "server.jar");
 const SERVER_JAR_ENV = "MINECRAFT";
 const INPUT_VERSION = "version";
 const OUTPUT_VERSION = "version";
@@ -59672,11 +59695,11 @@ async function getJson(http, url) {
  * @param {Pack} pack
  */
 async function downloadServer(pack) {
-  await tc.downloadTool(pack.downloads.server.url, SERVER_JAR_PATH);
+  await (0,tool_cache.downloadTool)(pack.downloads.server.url, SERVER_JAR_PATH);
 
   const checkSize = new Promise(async (resolve, reject) => {
     const expectedSize = pack.downloads.server.size;
-    const actualSize = (await fs.stat(SERVER_JAR_PATH)).size;
+    const actualSize = (await (0,promises_namespaceObject.stat)(SERVER_JAR_PATH)).size;
     if (expectedSize === actualSize) {
       resolve(undefined);
     } else {
@@ -59686,8 +59709,8 @@ async function downloadServer(pack) {
 
   const checkSha1 = new Promise(async (resolve, reject) => {
     const expectedSha1 = pack.downloads.server.sha1;
-    const sha1 = crypto.createHash("sha1");
-    sha1.update(await fs.readFile(SERVER_JAR_PATH));
+    const sha1 = (0,external_crypto_.createHash)("sha1");
+    sha1.update(await (0,promises_namespaceObject.readFile)(SERVER_JAR_PATH));
     const actualSha1 = sha1.digest("hex");
     if (expectedSha1 === actualSha1) {
       resolve(undefined);
@@ -59701,12 +59724,12 @@ async function downloadServer(pack) {
 
 async function run() {
   try {
-    const http = new HttpClient();
+    const http = new lib.HttpClient();
 
     /** @type {VersionManifestV2} */
     const versionManifest = await getJson(http, VERSION_MANIFEST_URL);
 
-    let version = core.getInput(INPUT_VERSION);
+    let version = (0,core.getInput)(INPUT_VERSION);
     switch (version) {
       case "release":
         version = versionManifest.latest.release;
@@ -59725,22 +59748,22 @@ async function run() {
     /** @type {Pack} */
     const pack = await getJson(http, versionEntry.url);
 
-    await io.mkdirP(ROOT_PATH);
+    await (0,io.mkdirP)(ROOT_PATH);
 
     const key = `${CACHE_KEY_PREFIX}-${version}`;
-    const cacheKey = await cache.restoreCache([ROOT_PATH], key, undefined, undefined, true);
+    const cacheKey = await (0,cache.restoreCache)([ROOT_PATH], key, undefined, undefined, true);
     if (cacheKey === undefined) {
       await downloadServer(pack);
-      await cache.saveCache([ROOT_PATH], key);
+      await (0,cache.saveCache)([ROOT_PATH], key);
     }
 
-    core.exportVariable(SERVER_JAR_ENV, SERVER_JAR_PATH);
-    core.setOutput(OUTPUT_VERSION, version);
-    core.setOutput(OUTPUT_PACKAGE, pack);
+    (0,core.exportVariable)(SERVER_JAR_ENV, SERVER_JAR_PATH);
+    (0,core.setOutput)(OUTPUT_VERSION, version);
+    (0,core.setOutput)(OUTPUT_PACKAGE, pack);
 
-    core.info(`Minecraft: ${version}`);
+    (0,core.info)(`Minecraft: ${version}`);
   } catch (error) {
-    core.setFailed(`${error}`);
+    (0,core.setFailed)(`${error}`);
   }
 }
 
