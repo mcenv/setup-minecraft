@@ -43,7 +43,7 @@ import { join } from "path";
 
 const VERSION_MANIFEST_URL = "https://piston-meta.mojang.com/mc/game/version_manifest_v2.json";
 const CACHE_KEY_PREFIX = "minecraft";
-const ROOT_PATH = ".minecraft";
+const ROOT_PATH = process.platform === "win32" ? "C:\\minecraft" : "/minecraft";
 const SERVER_JAR_PATH = join(ROOT_PATH, "server.jar");
 const SERVER_JAR_ENV = "MINECRAFT";
 const INPUT_VERSION = "version";
