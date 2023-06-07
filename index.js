@@ -3,13 +3,13 @@
 "use strict";
 
 import { restoreCache, saveCache } from "@actions/cache";
-import { getInput, exportVariable, setOutput, info, setFailed } from "@actions/core";
+import { getInput, exportVariable, setOutput, info, setFailed, getBooleanInput } from "@actions/core";
 import { HttpClient } from "@actions/http-client";
 import { mkdirP } from "@actions/io";
 import { downloadTool } from "@actions/tool-cache";
 import { createHash } from "crypto";
 import { stat, readFile } from "fs/promises";
-import { join, resolve } from "path";
+import { resolve } from "path";
 
 /**
  * @typedef {{
@@ -47,6 +47,7 @@ const ROOT_PATH = ".minecraft";
 const SERVER_JAR_PATH = resolve(ROOT_PATH, "server.jar");
 const SERVER_JAR_ENV = "MINECRAFT";
 const INPUT_VERSION = "version";
+const INPUT_INSTALL = "install";
 const OUTPUT_VERSION = "version";
 const OUTPUT_PACKAGE = "package";
 
@@ -123,12 +124,17 @@ async function run() {
 
     const key = `${CACHE_KEY_PREFIX}-${version}`;
     const cacheKey = await restoreCache([ROOT_PATH], key, undefined, undefined, true);
-    if (cacheKey === undefined) {
-      await downloadServer(pack);
-      await saveCache([ROOT_PATH], key);
+    const install = getBooleanInput(INPUT_INSTALL);
+
+    if (install) {
+      if (cacheKey === undefined) {
+        await downloadServer(pack);
+        await saveCache([ROOT_PATH], key);
+      }
+
+      exportVariable(SERVER_JAR_ENV, SERVER_JAR_PATH);
     }
 
-    exportVariable(SERVER_JAR_ENV, SERVER_JAR_PATH);
     setOutput(OUTPUT_VERSION, version);
     setOutput(OUTPUT_PACKAGE, pack);
 
