@@ -59672,8 +59672,8 @@ var external_path_ = __nccwpck_require__(1017);
 
 const VERSION_MANIFEST_URL = "https://piston-meta.mojang.com/mc/game/version_manifest_v2.json";
 const CACHE_KEY_PREFIX = "minecraft";
-const ROOT_PATH = process.platform === "win32" ? "C:\\minecraft" : "/minecraft";
-const SERVER_JAR_PATH = (0,external_path_.join)(ROOT_PATH, "server.jar");
+const ROOT_PATH = ".minecraft";
+const SERVER_JAR_PATH = (0,external_path_.resolve)(ROOT_PATH, "server.jar");
 const SERVER_JAR_ENV = "MINECRAFT";
 const INPUT_VERSION = "version";
 const OUTPUT_VERSION = "version";
