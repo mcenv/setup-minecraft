@@ -59676,6 +59676,7 @@ const ROOT_PATH = ".minecraft";
 const SERVER_JAR_PATH = (0,external_path_.resolve)(ROOT_PATH, "server.jar");
 const SERVER_JAR_ENV = "MINECRAFT";
 const INPUT_VERSION = "version";
+const INPUT_INSTALL = "install";
 const OUTPUT_VERSION = "version";
 const OUTPUT_PACKAGE = "package";
 
@@ -59752,12 +59753,17 @@ async function run() {
 
     const key = `${CACHE_KEY_PREFIX}-${version}`;
     const cacheKey = await (0,cache.restoreCache)([ROOT_PATH], key, undefined, undefined, true);
-    if (cacheKey === undefined) {
-      await downloadServer(pack);
-      await (0,cache.saveCache)([ROOT_PATH], key);
+    const install = (0,core.getBooleanInput)(INPUT_INSTALL);
+
+    if (install) {
+      if (cacheKey === undefined) {
+        await downloadServer(pack);
+        await (0,cache.saveCache)([ROOT_PATH], key);
+      }
+
+      (0,core.exportVariable)(SERVER_JAR_ENV, SERVER_JAR_PATH);
     }
 
-    (0,core.exportVariable)(SERVER_JAR_ENV, SERVER_JAR_PATH);
     (0,core.setOutput)(OUTPUT_VERSION, version);
     (0,core.setOutput)(OUTPUT_PACKAGE, pack);
 

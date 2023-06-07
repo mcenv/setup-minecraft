@@ -8,6 +8,10 @@ This action downloads and caches a specific version of Minecraft: Java Edition[^
 
 Minecraft version to use. Default `release`.
 
+### `install`
+
+Whether to install Minecraft. Default `true`.
+
 ## Outputs
 
 ### `version`

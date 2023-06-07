@@ -6,6 +6,10 @@ inputs:
     description: "Minecraft version to use"
     required: false
     default: "release"
+  install:
+    description: "Whether to install Minecraft"
+    required: false
+    default: true
 outputs:
   version:
     description: "Minecraft version used"
