@@ -36,7 +36,7 @@ Package used.
     version: "1.20.2"
 - uses: actions/setup-java@v3
   with:
-    distribution: "temurin"
+    distribution: "microsoft"
     java-version: ${{ fromJson(steps.minecraft.outputs.package).javaVersion.majorVersion }}
 - run: |
     echo Running Minecraft ${{ steps.minecraft.outputs.version }}.
