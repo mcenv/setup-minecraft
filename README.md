@@ -16,6 +16,10 @@ Whether to install Minecraft. Default `true`.
 
 Whether to cache Minecraft. Default `false`.
 
+### `retries`
+
+Number of retries to download Minecraft. Default `3`.
+
 ## Outputs
 
 ### `version`
