@@ -3,7 +3,7 @@
 "use strict";
 
 import { restoreCache, saveCache } from "@actions/cache";
-import { getInput, exportVariable, setOutput, info, setFailed, getBooleanInput } from "@actions/core";
+import { getInput, exportVariable, setOutput, info, setFailed, getBooleanInput, debug } from "@actions/core";
 import { HttpClient } from "@actions/http-client";
 import { mkdirP } from "@actions/io";
 import { downloadTool } from "@actions/tool-cache";
@@ -60,32 +60,36 @@ const http = new HttpClient();
  * @param {string} url
  * @returns {Promise<T>}
  */
-async function getJson(url) {
+async function fetchJson(url) {
   const response = await http.get(url);
   const body = await response.readBody();
   return JSON.parse(body);
 }
 
 /**
+ * @template T
  * @param {number} count 
- * @param {() => Promise<void>} action
+ * @param {() => Promise<T>} action
+ * @returns {Promise<T>}
  */
 async function retry(count, action) {
-  for (let i = count; i > 0; i--) {
-    try {
-      await action();
-    } catch (error) {
-      if (i === 1) {
-        throw error;
+  return new Promise((resolve, reject) => {
+    for (let i = count; i > 0; i--) {
+      try {
+        resolve(action());
+      } catch (error) {
+        if (i === 1) {
+          reject(error);
+        }
       }
     }
-  }
+  });
 }
 
 /**
  * @param {Package} pkg
  */
-async function downloadServer(pkg) {
+async function downloadAndVerifyServer(pkg) {
   await downloadTool(pkg.downloads.server.url, SERVER_JAR_PATH);
 
   {
@@ -110,7 +114,7 @@ async function downloadServer(pkg) {
 async function run() {
   try {
     /** @type {VersionManifestV2} */
-    const versionManifest = await getJson(VERSION_MANIFEST_URL);
+    const versionManifest = await fetchJson(VERSION_MANIFEST_URL);
 
     let version = getInput(INPUT_VERSION);
     switch (version) {
@@ -129,7 +133,7 @@ async function run() {
     }
 
     /** @type {Package} */
-    const pkg = await getJson(versionEntry.url);
+    const pkg = await fetchJson(versionEntry.url);
 
     await mkdirP(ROOT_PATH);
 
@@ -139,7 +143,7 @@ async function run() {
       const cacheKey = await restoreCache([ROOT_PATH], key, undefined, undefined, true);
       if (cacheKey === undefined) {
         const retries = parseInt(getInput(INPUT_RETRIES));
-        await retry(retries, () => downloadServer(pkg));
+        await retry(retries, () => downloadAndVerifyServer(pkg));
 
         const cache = getBooleanInput(INPUT_CACHE);
         if (cache) {
