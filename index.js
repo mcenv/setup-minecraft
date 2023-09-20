@@ -59800,7 +59800,7 @@ var __webpack_exports__ = {};
 __nccwpck_require__.r(__webpack_exports__);
 
 // EXTERNAL MODULE: ./node_modules/@actions/cache/lib/cache.js
-var cache = __nccwpck_require__(7799);
+var lib_cache = __nccwpck_require__(7799);
 // EXTERNAL MODULE: ./node_modules/@actions/core/lib/core.js
 var core = __nccwpck_require__(2186);
 // EXTERNAL MODULE: ./node_modules/@actions/http-client/lib/index.js
@@ -59866,6 +59866,7 @@ const SERVER_JAR_PATH = (0,external_path_.resolve)(ROOT_PATH, "server.jar");
 const SERVER_JAR_ENV = "MINECRAFT";
 const INPUT_VERSION = "version";
 const INPUT_INSTALL = "install";
+const INPUT_CACHE = "cache";
 const OUTPUT_VERSION = "version";
 const OUTPUT_PACKAGE = "package";
 
@@ -59940,14 +59941,19 @@ async function run() {
 
     await (0,io.mkdirP)(ROOT_PATH);
 
-    const key = `${CACHE_KEY_PREFIX}-${version}`;
-    const cacheKey = await (0,cache.restoreCache)([ROOT_PATH], key, undefined, undefined, true);
     const install = (0,core.getBooleanInput)(INPUT_INSTALL);
 
     if (install) {
+      const key = `${CACHE_KEY_PREFIX}-${version}`;
+      const cacheKey = await (0,lib_cache.restoreCache)([ROOT_PATH], key, undefined, undefined, true);
+
       if (cacheKey === undefined) {
         await downloadServer(pack);
-        await (0,cache.saveCache)([ROOT_PATH], key);
+
+        const cache = (0,core.getBooleanInput)(INPUT_CACHE);
+        if (cache) {
+          await (0,lib_cache.saveCache)([ROOT_PATH], key);
+        }
       }
 
       (0,core.exportVariable)(SERVER_JAR_ENV, SERVER_JAR_PATH);

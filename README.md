@@ -12,6 +12,10 @@ Minecraft version to use. Default `release`.
 
 Whether to install Minecraft. Default `true`.
 
+### `cache`
+
+Whether to cache Minecraft. Default `true`.
+
 ## Outputs
 
 ### `version`
@@ -25,14 +29,14 @@ Package used.
 ## Example usage
 
 ```yml
-- uses: actions/checkout@v3
+- uses: actions/checkout@v4
 - id: minecraft
   uses: mcenv/setup-minecraft@v3
   with:
-    version: "1.19.4"
+    version: "1.20.2"
 - uses: actions/setup-java@v3
   with:
-    distribution: "temurin"
+    distribution: "microsoft"
     java-version: ${{ fromJson(steps.minecraft.outputs.package).javaVersion.majorVersion }}
 - run: |
     echo Running Minecraft ${{ steps.minecraft.outputs.version }}.
