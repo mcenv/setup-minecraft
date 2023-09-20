@@ -59857,32 +59857,32 @@ __nccwpck_require__.r(__webpack_exports__);
 
 /**
  * @typedef {{
- *     latest: {
- *         release: string,
- *         snapshot: string
- *     },
- *     versions: [
- *         {
- *             id: string,
- *             type: "release" | "snapshot",
- *             url: string,
- *             time: string,
- *             releaseTime: string,
- *             sha1: string,
- *             complianceLevel: number
- *         }
- *     ]
+ *   latest: {
+ *     release: string,
+ *     snapshot: string
+ *   },
+ *   versions: [
+ *     {
+ *       id: string,
+ *       type: "release" | "snapshot",
+ *       url: string,
+ *       time: string,
+ *       releaseTime: string,
+ *       sha1: string,
+ *       complianceLevel: number
+ *     }
+ *   ]
  * }} VersionManifestV2
  *
  * @typedef {{
- *     downloads: {
- *         server: {
- *             sha1: string,
- *             size: number,
- *             url: string
- *         }
+ *   downloads: {
+ *     server: {
+ *       sha1: string,
+ *       size: number,
+ *       url: string
  *     }
- * }} Pack
+ *   }
+ * }} Package
  */
 
 const VERSION_MANIFEST_URL = "https://piston-meta.mojang.com/mc/game/version_manifest_v2.json";
@@ -59897,13 +59897,14 @@ const INPUT_RETRIES = "retries";
 const OUTPUT_VERSION = "version";
 const OUTPUT_PACKAGE = "package";
 
+const http = new _actions_http_client__WEBPACK_IMPORTED_MODULE_2__.HttpClient();
+
 /**
  * @template T
- * @param {HttpClient} http
  * @param {string} url
  * @returns {Promise<T>}
  */
-async function getJson(http, url) {
+async function getJson(url) {
   const response = await http.get(url);
   const body = await response.readBody();
   return JSON.parse(body);
@@ -59926,13 +59927,13 @@ async function retry(count, action) {
 }
 
 /**
- * @param {Pack} pack
+ * @param {Package} pkg
  */
-async function downloadServer(pack) {
-  await (0,_actions_tool_cache__WEBPACK_IMPORTED_MODULE_4__.downloadTool)(pack.downloads.server.url, SERVER_JAR_PATH);
+async function downloadServer(pkg) {
+  await (0,_actions_tool_cache__WEBPACK_IMPORTED_MODULE_4__.downloadTool)(pkg.downloads.server.url, SERVER_JAR_PATH);
 
   {
-    const expectedSize = pack.downloads.server.size;
+    const expectedSize = pkg.downloads.server.size;
     const actualSize = (0,fs__WEBPACK_IMPORTED_MODULE_6__.statSync)(SERVER_JAR_PATH).size;
     if (expectedSize !== actualSize) {
       throw new Error(`Expected size: ${expectedSize}\nActual size: ${actualSize}`);
@@ -59940,7 +59941,7 @@ async function downloadServer(pack) {
   }
 
   {
-    const expectedSha1 = pack.downloads.server.sha1;
+    const expectedSha1 = pkg.downloads.server.sha1;
     const sha1 = (0,crypto__WEBPACK_IMPORTED_MODULE_5__.createHash)("sha1");
     sha1.update((0,fs__WEBPACK_IMPORTED_MODULE_6__.readFileSync)(SERVER_JAR_PATH));
     const actualSha1 = sha1.digest("hex");
@@ -59952,10 +59953,8 @@ async function downloadServer(pack) {
 
 async function run() {
   try {
-    const http = new _actions_http_client__WEBPACK_IMPORTED_MODULE_2__.HttpClient();
-
     /** @type {VersionManifestV2} */
-    const versionManifest = await getJson(http, VERSION_MANIFEST_URL);
+    const versionManifest = await getJson(VERSION_MANIFEST_URL);
 
     let version = (0,_actions_core__WEBPACK_IMPORTED_MODULE_1__.getInput)(INPUT_VERSION);
     switch (version) {
@@ -59973,8 +59972,8 @@ async function run() {
       throw new Error(`No version '${version}' was found`);
     }
 
-    /** @type {Pack} */
-    const pack = await getJson(http, versionEntry.url);
+    /** @type {Package} */
+    const pkg = await getJson(versionEntry.url);
 
     await (0,_actions_io__WEBPACK_IMPORTED_MODULE_3__.mkdirP)(ROOT_PATH);
 
@@ -59984,7 +59983,7 @@ async function run() {
       const cacheKey = await (0,_actions_cache__WEBPACK_IMPORTED_MODULE_0__.restoreCache)([ROOT_PATH], key, undefined, undefined, true);
       if (cacheKey === undefined) {
         const retries = parseInt((0,_actions_core__WEBPACK_IMPORTED_MODULE_1__.getInput)(INPUT_RETRIES));
-        await retry(retries, () => downloadServer(pack));
+        await retry(retries, () => downloadServer(pkg));
 
         const cache = (0,_actions_core__WEBPACK_IMPORTED_MODULE_1__.getBooleanInput)(INPUT_CACHE);
         if (cache) {
@@ -59996,7 +59995,7 @@ async function run() {
     }
 
     (0,_actions_core__WEBPACK_IMPORTED_MODULE_1__.setOutput)(OUTPUT_VERSION, version);
-    (0,_actions_core__WEBPACK_IMPORTED_MODULE_1__.setOutput)(OUTPUT_PACKAGE, pack);
+    (0,_actions_core__WEBPACK_IMPORTED_MODULE_1__.setOutput)(OUTPUT_PACKAGE, pkg);
 
     (0,_actions_core__WEBPACK_IMPORTED_MODULE_1__.info)(`Minecraft: ${version}`);
   } catch (error) {
