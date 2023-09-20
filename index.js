@@ -78,6 +78,7 @@ async function retry(count, action) {
       debug(`Retrying: ${i}`);
       try {
         resolve(action());
+        break;
       } catch (error) {
         if (i === 1) {
           reject(error);
