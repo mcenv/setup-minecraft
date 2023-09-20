@@ -59776,6 +59776,35 @@ module.exports = JSON.parse('[[[0,44],"disallowed_STD3_valid"],[[45,46],"valid"]
 /******/ 	}
 /******/ 	
 /************************************************************************/
+/******/ 	/* webpack/runtime/compat get default export */
+/******/ 	(() => {
+/******/ 		// getDefaultExport function for compatibility with non-harmony modules
+/******/ 		__nccwpck_require__.n = (module) => {
+/******/ 			var getter = module && module.__esModule ?
+/******/ 				() => (module['default']) :
+/******/ 				() => (module);
+/******/ 			__nccwpck_require__.d(getter, { a: getter });
+/******/ 			return getter;
+/******/ 		};
+/******/ 	})();
+/******/ 	
+/******/ 	/* webpack/runtime/define property getters */
+/******/ 	(() => {
+/******/ 		// define getter functions for harmony exports
+/******/ 		__nccwpck_require__.d = (exports, definition) => {
+/******/ 			for(var key in definition) {
+/******/ 				if(__nccwpck_require__.o(definition, key) && !__nccwpck_require__.o(exports, key)) {
+/******/ 					Object.defineProperty(exports, key, { enumerable: true, get: definition[key] });
+/******/ 				}
+/******/ 			}
+/******/ 		};
+/******/ 	})();
+/******/ 	
+/******/ 	/* webpack/runtime/hasOwnProperty shorthand */
+/******/ 	(() => {
+/******/ 		__nccwpck_require__.o = (obj, prop) => (Object.prototype.hasOwnProperty.call(obj, prop))
+/******/ 	})();
+/******/ 	
 /******/ 	/* webpack/runtime/make namespace object */
 /******/ 	(() => {
 /******/ 		// define __esModule on exports
@@ -59796,26 +59825,23 @@ var __webpack_exports__ = {};
 // This entry need to be wrapped in an IIFE because it need to be in strict mode.
 (() => {
 "use strict";
-// ESM COMPAT FLAG
 __nccwpck_require__.r(__webpack_exports__);
-
-// EXTERNAL MODULE: ./node_modules/@actions/cache/lib/cache.js
-var lib_cache = __nccwpck_require__(7799);
-// EXTERNAL MODULE: ./node_modules/@actions/core/lib/core.js
-var core = __nccwpck_require__(2186);
-// EXTERNAL MODULE: ./node_modules/@actions/http-client/lib/index.js
-var lib = __nccwpck_require__(6255);
-// EXTERNAL MODULE: ./node_modules/@actions/io/lib/io.js
-var io = __nccwpck_require__(7436);
-// EXTERNAL MODULE: ./node_modules/@actions/tool-cache/lib/tool-cache.js
-var tool_cache = __nccwpck_require__(7784);
-// EXTERNAL MODULE: external "crypto"
-var external_crypto_ = __nccwpck_require__(6113);
-;// CONCATENATED MODULE: external "fs/promises"
-const promises_namespaceObject = require("fs/promises");
-// EXTERNAL MODULE: external "path"
-var external_path_ = __nccwpck_require__(1017);
-;// CONCATENATED MODULE: ./index.js
+/* harmony import */ var _actions_cache__WEBPACK_IMPORTED_MODULE_0__ = __nccwpck_require__(7799);
+/* harmony import */ var _actions_cache__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__nccwpck_require__.n(_actions_cache__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _actions_core__WEBPACK_IMPORTED_MODULE_1__ = __nccwpck_require__(2186);
+/* harmony import */ var _actions_core__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__nccwpck_require__.n(_actions_core__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _actions_http_client__WEBPACK_IMPORTED_MODULE_2__ = __nccwpck_require__(6255);
+/* harmony import */ var _actions_http_client__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__nccwpck_require__.n(_actions_http_client__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var _actions_io__WEBPACK_IMPORTED_MODULE_3__ = __nccwpck_require__(7436);
+/* harmony import */ var _actions_io__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__nccwpck_require__.n(_actions_io__WEBPACK_IMPORTED_MODULE_3__);
+/* harmony import */ var _actions_tool_cache__WEBPACK_IMPORTED_MODULE_4__ = __nccwpck_require__(7784);
+/* harmony import */ var _actions_tool_cache__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__nccwpck_require__.n(_actions_tool_cache__WEBPACK_IMPORTED_MODULE_4__);
+/* harmony import */ var crypto__WEBPACK_IMPORTED_MODULE_5__ = __nccwpck_require__(6113);
+/* harmony import */ var crypto__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__nccwpck_require__.n(crypto__WEBPACK_IMPORTED_MODULE_5__);
+/* harmony import */ var fs__WEBPACK_IMPORTED_MODULE_6__ = __nccwpck_require__(7147);
+/* harmony import */ var fs__WEBPACK_IMPORTED_MODULE_6___default = /*#__PURE__*/__nccwpck_require__.n(fs__WEBPACK_IMPORTED_MODULE_6__);
+/* harmony import */ var path__WEBPACK_IMPORTED_MODULE_7__ = __nccwpck_require__(1017);
+/* harmony import */ var path__WEBPACK_IMPORTED_MODULE_7___default = /*#__PURE__*/__nccwpck_require__.n(path__WEBPACK_IMPORTED_MODULE_7__);
 // @ts-check
 
 
@@ -59862,7 +59888,7 @@ var external_path_ = __nccwpck_require__(1017);
 const VERSION_MANIFEST_URL = "https://piston-meta.mojang.com/mc/game/version_manifest_v2.json";
 const CACHE_KEY_PREFIX = "minecraft";
 const ROOT_PATH = ".minecraft";
-const SERVER_JAR_PATH = (0,external_path_.resolve)(ROOT_PATH, "server.jar");
+const SERVER_JAR_PATH = (0,path__WEBPACK_IMPORTED_MODULE_7__.resolve)(ROOT_PATH, "server.jar");
 const SERVER_JAR_ENV = "MINECRAFT";
 const INPUT_VERSION = "version";
 const INPUT_INSTALL = "install";
@@ -59886,41 +59912,35 @@ async function getJson(http, url) {
  * @param {Pack} pack
  */
 async function downloadServer(pack) {
-  await (0,tool_cache.downloadTool)(pack.downloads.server.url, SERVER_JAR_PATH);
+  await (0,_actions_tool_cache__WEBPACK_IMPORTED_MODULE_4__.downloadTool)(pack.downloads.server.url, SERVER_JAR_PATH);
 
-  const checkSize = new Promise(async (resolve, reject) => {
+  {
     const expectedSize = pack.downloads.server.size;
-    const actualSize = (await (0,promises_namespaceObject.stat)(SERVER_JAR_PATH)).size;
-    if (expectedSize === actualSize) {
-      resolve(undefined);
-    } else {
-      reject(`Expected size: ${expectedSize}\nActual size: ${actualSize}`);
+    const actualSize = (0,fs__WEBPACK_IMPORTED_MODULE_6__.statSync)(SERVER_JAR_PATH).size;
+    if (expectedSize !== actualSize) {
+      throw new Error(`Expected size: ${expectedSize}\nActual size: ${actualSize}`);
     }
-  });
+  }
 
-  const checkSha1 = new Promise(async (resolve, reject) => {
+  {
     const expectedSha1 = pack.downloads.server.sha1;
-    const sha1 = (0,external_crypto_.createHash)("sha1");
-    sha1.update(await (0,promises_namespaceObject.readFile)(SERVER_JAR_PATH));
+    const sha1 = (0,crypto__WEBPACK_IMPORTED_MODULE_5__.createHash)("sha1");
+    sha1.update((0,fs__WEBPACK_IMPORTED_MODULE_6__.readFileSync)(SERVER_JAR_PATH));
     const actualSha1 = sha1.digest("hex");
-    if (expectedSha1 === actualSha1) {
-      resolve(undefined);
-    } else {
-      reject(`Expected sha1: ${expectedSha1}\nActual sha1: ${actualSha1}`);
+    if (expectedSha1 !== actualSha1) {
+      throw new Error(`Expected sha1: ${expectedSha1}\nActual sha1: ${actualSha1}`);
     }
-  });
-
-  return Promise.all([checkSize, checkSha1]);
+  }
 }
 
 async function run() {
   try {
-    const http = new lib.HttpClient();
+    const http = new _actions_http_client__WEBPACK_IMPORTED_MODULE_2__.HttpClient();
 
     /** @type {VersionManifestV2} */
     const versionManifest = await getJson(http, VERSION_MANIFEST_URL);
 
-    let version = (0,core.getInput)(INPUT_VERSION);
+    let version = (0,_actions_core__WEBPACK_IMPORTED_MODULE_1__.getInput)(INPUT_VERSION);
     switch (version) {
       case "release":
         version = versionManifest.latest.release;
@@ -59939,32 +59959,32 @@ async function run() {
     /** @type {Pack} */
     const pack = await getJson(http, versionEntry.url);
 
-    await (0,io.mkdirP)(ROOT_PATH);
+    await (0,_actions_io__WEBPACK_IMPORTED_MODULE_3__.mkdirP)(ROOT_PATH);
 
-    const install = (0,core.getBooleanInput)(INPUT_INSTALL);
+    const install = (0,_actions_core__WEBPACK_IMPORTED_MODULE_1__.getBooleanInput)(INPUT_INSTALL);
 
     if (install) {
       const key = `${CACHE_KEY_PREFIX}-${version}`;
-      const cacheKey = await (0,lib_cache.restoreCache)([ROOT_PATH], key, undefined, undefined, true);
+      const cacheKey = await (0,_actions_cache__WEBPACK_IMPORTED_MODULE_0__.restoreCache)([ROOT_PATH], key, undefined, undefined, true);
 
       if (cacheKey === undefined) {
         await downloadServer(pack);
 
-        const cache = (0,core.getBooleanInput)(INPUT_CACHE);
+        const cache = (0,_actions_core__WEBPACK_IMPORTED_MODULE_1__.getBooleanInput)(INPUT_CACHE);
         if (cache) {
-          await (0,lib_cache.saveCache)([ROOT_PATH], key);
+          await (0,_actions_cache__WEBPACK_IMPORTED_MODULE_0__.saveCache)([ROOT_PATH], key);
         }
       }
 
-      (0,core.exportVariable)(SERVER_JAR_ENV, SERVER_JAR_PATH);
+      (0,_actions_core__WEBPACK_IMPORTED_MODULE_1__.exportVariable)(SERVER_JAR_ENV, SERVER_JAR_PATH);
     }
 
-    (0,core.setOutput)(OUTPUT_VERSION, version);
-    (0,core.setOutput)(OUTPUT_PACKAGE, pack);
+    (0,_actions_core__WEBPACK_IMPORTED_MODULE_1__.setOutput)(OUTPUT_VERSION, version);
+    (0,_actions_core__WEBPACK_IMPORTED_MODULE_1__.setOutput)(OUTPUT_PACKAGE, pack);
 
-    (0,core.info)(`Minecraft: ${version}`);
+    (0,_actions_core__WEBPACK_IMPORTED_MODULE_1__.info)(`Minecraft: ${version}`);
   } catch (error) {
-    (0,core.setFailed)(`${error}`);
+    (0,_actions_core__WEBPACK_IMPORTED_MODULE_1__.setFailed)(`${error}`);
   }
 }
 

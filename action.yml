@@ -13,7 +13,7 @@ inputs:
   cache:
     description: "Whether to cache Minecraft"
     required: false
-    default: true
+    default: false
 outputs:
   version:
     description: "Minecraft version used"
