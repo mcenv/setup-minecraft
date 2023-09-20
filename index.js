@@ -8,7 +8,7 @@ import { HttpClient } from "@actions/http-client";
 import { mkdirP } from "@actions/io";
 import { downloadTool } from "@actions/tool-cache";
 import { createHash } from "crypto";
-import { stat, readFile } from "fs/promises";
+import { statSync, readFileSync } from "fs";
 import { resolve } from "path";
 
 /**
@@ -70,29 +70,23 @@ async function getJson(http, url) {
 async function downloadServer(pack) {
   await downloadTool(pack.downloads.server.url, SERVER_JAR_PATH);
 
-  const checkSize = new Promise(async (resolve, reject) => {
+  {
     const expectedSize = pack.downloads.server.size;
-    const actualSize = (await stat(SERVER_JAR_PATH)).size;
-    if (expectedSize === actualSize) {
-      resolve(undefined);
-    } else {
-      reject(`Expected size: ${expectedSize}\nActual size: ${actualSize}`);
+    const actualSize = statSync(SERVER_JAR_PATH).size;
+    if (expectedSize !== actualSize) {
+      throw new Error(`Expected size: ${expectedSize}\nActual size: ${actualSize}`);
     }
-  });
+  }
 
-  const checkSha1 = new Promise(async (resolve, reject) => {
+  {
     const expectedSha1 = pack.downloads.server.sha1;
     const sha1 = createHash("sha1");
-    sha1.update(await readFile(SERVER_JAR_PATH));
+    sha1.update(readFileSync(SERVER_JAR_PATH));
     const actualSha1 = sha1.digest("hex");
-    if (expectedSha1 === actualSha1) {
-      resolve(undefined);
-    } else {
-      reject(`Expected sha1: ${expectedSha1}\nActual sha1: ${actualSha1}`);
+    if (expectedSha1 !== actualSha1) {
+      throw new Error(`Expected sha1: ${expectedSha1}\nActual sha1: ${actualSha1}`);
     }
-  });
-
-  return Promise.all([checkSize, checkSha1]);
+  }
 }
 
 async function run() {
