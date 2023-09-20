@@ -59904,32 +59904,36 @@ const http = new _actions_http_client__WEBPACK_IMPORTED_MODULE_2__.HttpClient();
  * @param {string} url
  * @returns {Promise<T>}
  */
-async function getJson(url) {
+async function fetchJson(url) {
   const response = await http.get(url);
   const body = await response.readBody();
   return JSON.parse(body);
 }
 
 /**
+ * @template T
  * @param {number} count 
- * @param {() => Promise<void>} action
+ * @param {() => Promise<T>} action
+ * @returns {Promise<T>}
  */
 async function retry(count, action) {
-  for (let i = count; i > 0; i--) {
-    try {
-      await action();
-    } catch (error) {
-      if (i === 1) {
-        throw error;
+  return new Promise((resolve, reject) => {
+    for (let i = count; i > 0; i--) {
+      try {
+        resolve(action());
+      } catch (error) {
+        if (i === 1) {
+          reject(error);
+        }
       }
     }
-  }
+  });
 }
 
 /**
  * @param {Package} pkg
  */
-async function downloadServer(pkg) {
+async function downloadAndVerifyServer(pkg) {
   await (0,_actions_tool_cache__WEBPACK_IMPORTED_MODULE_4__.downloadTool)(pkg.downloads.server.url, SERVER_JAR_PATH);
 
   {
@@ -59954,7 +59958,7 @@ async function downloadServer(pkg) {
 async function run() {
   try {
     /** @type {VersionManifestV2} */
-    const versionManifest = await getJson(VERSION_MANIFEST_URL);
+    const versionManifest = await fetchJson(VERSION_MANIFEST_URL);
 
     let version = (0,_actions_core__WEBPACK_IMPORTED_MODULE_1__.getInput)(INPUT_VERSION);
     switch (version) {
@@ -59973,7 +59977,7 @@ async function run() {
     }
 
     /** @type {Package} */
-    const pkg = await getJson(versionEntry.url);
+    const pkg = await fetchJson(versionEntry.url);
 
     await (0,_actions_io__WEBPACK_IMPORTED_MODULE_3__.mkdirP)(ROOT_PATH);
 
@@ -59983,7 +59987,7 @@ async function run() {
       const cacheKey = await (0,_actions_cache__WEBPACK_IMPORTED_MODULE_0__.restoreCache)([ROOT_PATH], key, undefined, undefined, true);
       if (cacheKey === undefined) {
         const retries = parseInt((0,_actions_core__WEBPACK_IMPORTED_MODULE_1__.getInput)(INPUT_RETRIES));
-        await retry(retries, () => downloadServer(pkg));
+        await retry(retries, () => downloadAndVerifyServer(pkg));
 
         const cache = (0,_actions_core__WEBPACK_IMPORTED_MODULE_1__.getBooleanInput)(INPUT_CACHE);
         if (cache) {
