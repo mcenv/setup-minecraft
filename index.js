@@ -59922,6 +59922,7 @@ async function retry(count, action) {
       (0,_actions_core__WEBPACK_IMPORTED_MODULE_1__.debug)(`Retrying: ${i}`);
       try {
         resolve(action());
+        break;
       } catch (error) {
         if (i === 1) {
           reject(error);
