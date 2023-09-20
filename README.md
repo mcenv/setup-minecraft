@@ -1,6 +1,6 @@
 # <samp>setup-minecraft</samp>
 
-This action downloads and caches a specific version of Minecraft: Java Edition[^1].
+This action downloads a specific version of Minecraft: Java Edition[^1].
 
 ## Inputs
 
@@ -14,7 +14,7 @@ Whether to install Minecraft. Default `true`.
 
 ### `cache`
 
-Whether to cache Minecraft. Default `true`.
+Whether to cache Minecraft. Default `false`.
 
 ## Outputs
 
