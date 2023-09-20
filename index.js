@@ -75,6 +75,7 @@ async function fetchJson(url) {
 async function retry(count, action) {
   return new Promise((resolve, reject) => {
     for (let i = count; i > 0; i--) {
+      debug(`Retrying: ${i}`);
       try {
         resolve(action());
       } catch (error) {
