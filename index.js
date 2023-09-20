@@ -38,7 +38,7 @@ import { resolve } from "path";
  *       url: string
  *     }
  *   }
- * }} Pack
+ * }} Package
  */
 
 const VERSION_MANIFEST_URL = "https://piston-meta.mojang.com/mc/game/version_manifest_v2.json";
@@ -53,13 +53,14 @@ const INPUT_RETRIES = "retries";
 const OUTPUT_VERSION = "version";
 const OUTPUT_PACKAGE = "package";
 
+const http = new HttpClient();
+
 /**
  * @template T
- * @param {HttpClient} http
  * @param {string} url
  * @returns {Promise<T>}
  */
-async function getJson(http, url) {
+async function getJson(url) {
   const response = await http.get(url);
   const body = await response.readBody();
   return JSON.parse(body);
@@ -82,13 +83,13 @@ async function retry(count, action) {
 }
 
 /**
- * @param {Pack} pack
+ * @param {Package} pkg
  */
-async function downloadServer(pack) {
-  await downloadTool(pack.downloads.server.url, SERVER_JAR_PATH);
+async function downloadServer(pkg) {
+  await downloadTool(pkg.downloads.server.url, SERVER_JAR_PATH);
 
   {
-    const expectedSize = pack.downloads.server.size;
+    const expectedSize = pkg.downloads.server.size;
     const actualSize = statSync(SERVER_JAR_PATH).size;
     if (expectedSize !== actualSize) {
       throw new Error(`Expected size: ${expectedSize}\nActual size: ${actualSize}`);
@@ -96,7 +97,7 @@ async function downloadServer(pack) {
   }
 
   {
-    const expectedSha1 = pack.downloads.server.sha1;
+    const expectedSha1 = pkg.downloads.server.sha1;
     const sha1 = createHash("sha1");
     sha1.update(readFileSync(SERVER_JAR_PATH));
     const actualSha1 = sha1.digest("hex");
@@ -108,10 +109,8 @@ async function downloadServer(pack) {
 
 async function run() {
   try {
-    const http = new HttpClient();
-
     /** @type {VersionManifestV2} */
-    const versionManifest = await getJson(http, VERSION_MANIFEST_URL);
+    const versionManifest = await getJson(VERSION_MANIFEST_URL);
 
     let version = getInput(INPUT_VERSION);
     switch (version) {
@@ -129,8 +128,8 @@ async function run() {
       throw new Error(`No version '${version}' was found`);
     }
 
-    /** @type {Pack} */
-    const pack = await getJson(http, versionEntry.url);
+    /** @type {Package} */
+    const pkg = await getJson(versionEntry.url);
 
     await mkdirP(ROOT_PATH);
 
@@ -140,7 +139,7 @@ async function run() {
       const cacheKey = await restoreCache([ROOT_PATH], key, undefined, undefined, true);
       if (cacheKey === undefined) {
         const retries = parseInt(getInput(INPUT_RETRIES));
-        await retry(retries, () => downloadServer(pack));
+        await retry(retries, () => downloadServer(pkg));
 
         const cache = getBooleanInput(INPUT_CACHE);
         if (cache) {
@@ -152,7 +151,7 @@ async function run() {
     }
 
     setOutput(OUTPUT_VERSION, version);
-    setOutput(OUTPUT_PACKAGE, pack);
+    setOutput(OUTPUT_PACKAGE, pkg);
 
     info(`Minecraft: ${version}`);
   } catch (error) {
