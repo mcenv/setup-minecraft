@@ -12,6 +12,10 @@ Minecraft version to use. Default `release`.
 
 Whether to install Minecraft. Default `true`.
 
+### `cache`
+
+Whether to cache Minecraft. Default `true`.
+
 ## Outputs
 
 ### `version`

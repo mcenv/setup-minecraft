@@ -48,6 +48,7 @@ const SERVER_JAR_PATH = resolve(ROOT_PATH, "server.jar");
 const SERVER_JAR_ENV = "MINECRAFT";
 const INPUT_VERSION = "version";
 const INPUT_INSTALL = "install";
+const INPUT_CACHE = "cache";
 const OUTPUT_VERSION = "version";
 const OUTPUT_PACKAGE = "package";
 
@@ -122,14 +123,19 @@ async function run() {
 
     await mkdirP(ROOT_PATH);
 
-    const key = `${CACHE_KEY_PREFIX}-${version}`;
-    const cacheKey = await restoreCache([ROOT_PATH], key, undefined, undefined, true);
     const install = getBooleanInput(INPUT_INSTALL);
 
     if (install) {
+      const key = `${CACHE_KEY_PREFIX}-${version}`;
+      const cacheKey = await restoreCache([ROOT_PATH], key, undefined, undefined, true);
+
       if (cacheKey === undefined) {
         await downloadServer(pack);
-        await saveCache([ROOT_PATH], key);
+
+        const cache = getBooleanInput(INPUT_CACHE);
+        if (cache) {
+          await saveCache([ROOT_PATH], key);
+        }
       }
 
       exportVariable(SERVER_JAR_ENV, SERVER_JAR_PATH);

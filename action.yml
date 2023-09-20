@@ -10,6 +10,10 @@ inputs:
     description: "Whether to install Minecraft"
     required: false
     default: true
+  cache:
+    description: "Whether to cache Minecraft"
+    required: false
+    default: true
 outputs:
   version:
     description: "Minecraft version used"
