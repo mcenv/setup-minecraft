@@ -59893,6 +59893,7 @@ const SERVER_JAR_ENV = "MINECRAFT";
 const INPUT_VERSION = "version";
 const INPUT_INSTALL = "install";
 const INPUT_CACHE = "cache";
+const INPUT_RETRIES = "retries";
 const OUTPUT_VERSION = "version";
 const OUTPUT_PACKAGE = "package";
 
@@ -59906,6 +59907,22 @@ async function getJson(http, url) {
   const response = await http.get(url);
   const body = await response.readBody();
   return JSON.parse(body);
+}
+
+/**
+ * @param {number} count 
+ * @param {() => Promise<void>} action
+ */
+async function retry(count, action) {
+  for (let i = count; i > 0; i--) {
+    try {
+      await action();
+    } catch (error) {
+      if (i === 1) {
+        throw error;
+      }
+    }
+  }
 }
 
 /**
@@ -59952,7 +59969,7 @@ async function run() {
     }
 
     const versionEntry = versionManifest.versions.find(v => v.id === version);
-    if (!versionEntry) {
+    if (versionEntry === undefined) {
       throw new Error(`No version '${version}' was found`);
     }
 
@@ -59962,13 +59979,12 @@ async function run() {
     await (0,_actions_io__WEBPACK_IMPORTED_MODULE_3__.mkdirP)(ROOT_PATH);
 
     const install = (0,_actions_core__WEBPACK_IMPORTED_MODULE_1__.getBooleanInput)(INPUT_INSTALL);
-
     if (install) {
       const key = `${CACHE_KEY_PREFIX}-${version}`;
       const cacheKey = await (0,_actions_cache__WEBPACK_IMPORTED_MODULE_0__.restoreCache)([ROOT_PATH], key, undefined, undefined, true);
-
       if (cacheKey === undefined) {
-        await downloadServer(pack);
+        const retries = parseInt((0,_actions_core__WEBPACK_IMPORTED_MODULE_1__.getInput)(INPUT_RETRIES));
+        await retry(retries, () => downloadServer(pack));
 
         const cache = (0,_actions_core__WEBPACK_IMPORTED_MODULE_1__.getBooleanInput)(INPUT_CACHE);
         if (cache) {
