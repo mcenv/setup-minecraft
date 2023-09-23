@@ -1,34 +1,22 @@
 # <samp>setup-minecraft</samp>
 
-This action downloads a specific version of Minecraft: Java Edition[^1].
+This action downloads a specific version of [Minecraft: Java Edition](https://www.minecraft.net/about-minecraft)[^1].
 
 ## Inputs
 
-### `version`
-
-Minecraft version to use. Default `release`.
-
-### `install`
-
-Whether to install Minecraft. Default `true`.
-
-### `cache`
-
-Whether to cache Minecraft. Default `false`.
-
-### `retries`
-
-Number of retries to download Minecraft. Default `3`.
+| Name      | Description                              | Default   |
+|-----------|------------------------------------------|-----------|
+| `version` | Minecraft version to use.                | `release` |
+| `install` | Whether to install Minecraft.            | `true`    |
+| `cache`   | Whether to cache Minecraft.              | `false`   |
+| `retries` | Number of retries to download Minecraft. | `3`       |
 
 ## Outputs
 
-### `version`
-
-Minecraft version used.
-
-### `package`
-
-Package used.
+| Name      | Description                              |
+|-----------|------------------------------------------|
+| `version` | Minecraft version used.                  |
+| `package` | Package used.                            |
 
 ## Example usage
 
