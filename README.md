@@ -1,5 +1,7 @@
 # <samp>setup-minecraft</samp>
 
+[![Test](https://github.com/mcenv/setup-minecraft/actions/workflows/test.yml/badge.svg)](https://github.com/mcenv/setup-minecraft/actions/workflows/test.yml)
+
 This action downloads a specific version of [Minecraft: Java Edition](https://www.minecraft.net/about-minecraft)[^1].
 
 ## Inputs

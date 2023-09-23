@@ -5,6 +5,7 @@ on:
     branches:
       - "main"
     paths:
+      - "action.yml"
       - "index.js"
       - "package-lock.json"
       - "package.json"
@@ -15,13 +16,16 @@ jobs:
     runs-on: ubuntu-latest
     continue-on-error: true
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
-      - uses: actions/setup-node@v3
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
         with:
           node-version: "16"
-      - run: |
+      - name: Update
+        run: |
           git config --global user.name "mcenv"
           git config --global user.email "mcenv@users.noreply.github.com"
           git worktree add dist dist

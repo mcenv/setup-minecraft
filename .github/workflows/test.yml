@@ -1,0 +1,26 @@
+name: Test
+
+on:
+  push:
+    branches:
+      - "dist"
+  workflow_dispatch:
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Setup Minecraft
+        id: minecraft
+        uses: mcenv/setup-minecraft@dist
+        with:
+          version: snapshot
+      - name: Setup Java
+        uses: actions/setup-java@v3
+        with:
+          distribution: "microsoft"
+          java-version: ${{ fromJson(steps.minecraft.outputs.package).javaVersion.majorVersion }}
+      - name: Check Minecraft
+        run: |
+          echo Running Minecraft ${{ steps.minecraft.outputs.version }}.
+          java -jar $MINECRAFT --help
