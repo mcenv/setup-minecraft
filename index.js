@@ -83406,7 +83406,7 @@ async function fetchJson(url) {
 
 /**
  * @template T
- * @param {number} count 
+ * @param {number} count
  * @param {() => Promise<T>} action
  * @returns {Promise<T>}
  */
@@ -83479,15 +83479,16 @@ async function run() {
 
     const install = (0,_actions_core__WEBPACK_IMPORTED_MODULE_1__.getBooleanInput)(INPUT_INSTALL);
     if (install) {
-      const key = `${CACHE_KEY_PREFIX}-${version}`;
-      const cacheKey = await (0,_actions_cache__WEBPACK_IMPORTED_MODULE_0__.restoreCache)([ROOT_PATH], key, undefined, undefined, true);
+      const paths = [ROOT_PATH];
+      const primaryKey = `${CACHE_KEY_PREFIX}-${version}`;
+      const cacheKey = await (0,_actions_cache__WEBPACK_IMPORTED_MODULE_0__.restoreCache)(paths, primaryKey, undefined, undefined, true);
       if (cacheKey === undefined) {
         const retries = parseInt((0,_actions_core__WEBPACK_IMPORTED_MODULE_1__.getInput)(INPUT_RETRIES));
         await retry(retries, () => downloadAndVerifyServer(pkg));
 
         const cache = (0,_actions_core__WEBPACK_IMPORTED_MODULE_1__.getBooleanInput)(INPUT_CACHE);
         if (cache) {
-          await (0,_actions_cache__WEBPACK_IMPORTED_MODULE_0__.saveCache)([ROOT_PATH], key);
+          await (0,_actions_cache__WEBPACK_IMPORTED_MODULE_0__.saveCache)(paths, primaryKey);
         }
       }
 
