@@ -68,7 +68,7 @@ async function fetchJson(url) {
 
 /**
  * @template T
- * @param {number} count 
+ * @param {number} count
  * @param {() => Promise<T>} action
  * @returns {Promise<T>}
  */
@@ -141,15 +141,16 @@ async function run() {
 
     const install = getBooleanInput(INPUT_INSTALL);
     if (install) {
-      const key = `${CACHE_KEY_PREFIX}-${version}`;
-      const cacheKey = await restoreCache([ROOT_PATH], key, undefined, undefined, true);
+      const paths = [ROOT_PATH];
+      const primaryKey = `${CACHE_KEY_PREFIX}-${version}`;
+      const cacheKey = await restoreCache(paths, primaryKey, undefined, undefined, true);
       if (cacheKey === undefined) {
         const retries = parseInt(getInput(INPUT_RETRIES));
         await retry(retries, () => downloadAndVerifyServer(pkg));
 
         const cache = getBooleanInput(INPUT_CACHE);
         if (cache) {
-          await saveCache([ROOT_PATH], key);
+          await saveCache(paths, primaryKey);
         }
       }
 
